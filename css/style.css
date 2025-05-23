@@ -1,0 +1,415 @@
+/* style.css*/
+body {
+    position: relative;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    padding-top: 80px;
+    min-width: 1024px;
+    overflow-x: auto;
+    z-index: 1;
+  }
+  
+ body::before {
+    content: "";
+    position: fixed; /* use fixed to keep it from scrolling */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../assets/image/flower1.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 80%; /* adjust this value to control transparency */
+    z-index: -1; /* puts it behind all content */
+  }
+  
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 15px 5px;
+    background-color: #2a573b;
+    color: rgb(159, 252, 106);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  
+  }
+    
+  /* Logo & Title */
+  .logo-title-container {
+    display: flex;
+    align-items: center;
+    /* Ensures everything is aligned vertically */
+    gap: 8px;
+    /* Adjusts spacing between logo and title */
+  
+  
+  }
+  
+  .logo-title-container img {
+    width: 40px;
+    /* Logo size */
+    height: 40px;
+    object-fit: contain;
+    /* Prevents stretching */
+    vertical-align: middle;
+    /* Aligns image properly */
+    cursor: pointer;
+  }
+  
+  
+  .logo-title-container a {
+    display: flex;
+    align-items: center;
+    /* Aligns buttons with the logo and title */
+    margin: 0;
+    padding: 5px;
+    /* Reduce top and bottom padding */
+    color: #4aff44;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 23px;
+    text-decoration: none;
+    /* Removes underline */
+    transition: 0.3s;
+  }
+  
+  /* Remove the underline and set the text color to black */
+  .offcanvas-title {
+    text-decoration: none; /* Remove underline */
+    color: black; /* Set text color to black */
+  }
+  
+  .offcanvas-title:hover {
+    color: black; /* Ensure the color remains black when hovered */
+    text-decoration: none; /* Ensure no underline appears on hover */
+  }
+  
+  /* Styled Link as a Button */
+  .header-buttons a {
+    align-items: center;
+    /* Aligns buttons with the logo and title */
+    gap: 5px;
+    /* Adjust spacing between buttons */
+    color: #4aff44;;
+    border: none;
+    padding: 10px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    /* Removes underline */
+    display: inline-block;
+    /* Makes it behave like a button */
+    transition: 0.3s;
+  }
+  
+  .header-buttons a:hover {
+    background: rgba(86, 224, 82, 0.938);
+    color: white;
+    text-decoration: none;
+    /* Keeps it looking like a button */
+  }
+  
+    main-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    /* Ensure it takes full width */
+  
+    margin: 0 auto;
+    /* Center it */
+  
+  }
+  
+  #timerContainerGroup {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 20px;
+    border-radius: 10px;
+    width: 1200px;
+      box-shadow: 0 10px 30px rgba(66, 121, 58, 0.527);
+
+    background-image: url("../assets/image/black.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    align-items: center;
+    /* Centers children horizontally */
+    justify-content: center;
+    /* Centers children vertically */
+  }
+  
+  
+  
+  /* Timer Styling */
+  .timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 400px;
+    background: #fafdf8;
+    border-radius: 50%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    border: 8px solid transparent;
+    background-image: linear-gradient(white, white),
+      conic-gradient(#4caf50, #ffeb3b, #f44336);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    margin-bottom: 20px;
+  }
+  
+  /* Timer Display */
+  #timerContainer {
+    font-size: 50px;
+    font-weight: bold;
+    color: #199b15;
+  }
+  
+  /* Ensure the "Set Timer" button is centered */
+  #timerContainerGroup button {
+    margin: 5px 0;
+  }
+  
+  /* Center Timer Buttons */
+  #timerButtons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    /* Add spacing between buttons */
+    margin-top: 10px;
+  }
+  
+  #roundInfo {
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    /* Centers text */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    /* Ensures it spans the container width */
+    margin-bottom: 10px;
+    /* Adds some space below it */
+  }
+  
+  /*todolist*/
+  
+  .task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .task.completed .task-name {
+    text-decoration: line-through;
+    color: gray;
+  }
+  
+  .task-details {
+    display: none;
+    font-size: 0.9em;
+    color: #666;
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 5px;
+    justify-content: flex-end; /* Aligns buttons to the right */
+  
+  }
+  
+  button {
+    cursor: pointer;
+  }
+  
+  .todo-container {
+    flex: 1;
+    background: rgba(93, 150, 67, 0.979);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(152, 241, 140, 0.527);
+    max-width: 800px;
+    margin-left: 30px; /* Pushes the to-do list away from the timer */
+  
+    
+  }
+  
+  
+  .modal-footer {
+    display: flex;
+    gap: 10px;
+    /* Adds space between buttons */
+  }
+  
+  
+  .modal-body label {
+    font-weight: normal;
+    /* Removes bold */
+    display: block;
+    /* Makes label take full width */
+    text-align: left;
+    /* Aligns text to the left */
+  }
+  
+  
+  .custom-form {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  .profile-icon {
+    font-size: 15px;
+    /* Adjust icon size */
+    color: #333;
+    /* Change color */
+    margin-left: 5px;
+    /* Add space after Quotes */
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .profile-icon:hover {
+    color: rgba(86, 224, 82, 0.938)
+  }
+  
+  /*PHOTOCARDS*/
+  /* Reduce padding inside each photocard */
+  .photocard {
+    width: 170px;
+    height: 200px;
+    padding: 8px;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.75);
+  }
+  
+  .photocard:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Reduce row spacing 
+  .collection-container .row {
+    margin-top: 30px;
+    --bs-gutter-x: 5px;
+    
+    --bs-gutter-y: 5px;
+  }*/
+  
+  /* Reduce modal image size */
+  .modal-img {
+    width: 50%;
+  }
+  
+  
+  /*quotes*/
+  /* Card styling */
+  .card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    gap: 10px;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Card header styling */
+  .card-header {
+    font-weight: bold;
+    background-color: #8cd615; /* Green shade */
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Text styling inside the card */
+  .card-text {
+    font-size: 18px;
+    color: #f5eeee;
+    font-style: italic;
+  }
+  
+  
+  .floating-icon {
+    position: fixed;
+    bottom: 20px;  /* Distance from the bottom */
+    right: 20px;   /* Distance from the right */
+    background-color: #2f8f17; /* Blue color */
+    color: white;
+    width: 50px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    z-index: 1000; /* Ensures it's above other elements */
+  }
+  
+  .floating-icon:hover {
+    background-color: #73e94f; /* Darker blue on hover */
+    transform: scale(1.05);
+    
+  }
+  
+  
+  /* MOOD */
+  .mood-container {
+    width: 100%; 
+    background-color: #fefefe;
+    padding-top: 20px;
+  }
+  
+  
+  /*profile*/
+  
+  
+  @media (max-width: 768px) {
+    .d-flex {
+      flex-direction: row !important;
+      /* Force it to stay in a row */
+      justify-content: space-between;
+    }
+  
+  
+    .custom-form {
+      max-width: 90%;
+      padding: 15px;
+  
+  
+    }
+  
+  }

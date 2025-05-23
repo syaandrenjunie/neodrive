@@ -1,0 +1,895 @@
+
+.timer-container {
+  text-align: center;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  width: 300px;
+  margin: auto;
+  background: #f9f9f9;
+}
+
+.timer {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 350px;
+  height: 350px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  border: 8px solid transparent;
+  background-image: linear-gradient(white, white),
+    conic-gradient(#4caf50, #ffeb3b, #f44336);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+
+
+/* Timer Controls */
+.btn-timer {
+  margin-top: 15px;
+}
+
+
+
+/* Timer Display */
+#timerContainer {
+  margin-top: 15px;
+  font-size: 50px;
+  font-weight: bold;
+  color: #199b15;
+}
+
+
+timer issue
+1. button toggle
+2. when bbreak, it didnt  display break session infoghm
+
+
+
+this is index.php wher ethere is offcanvas. 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoDrive</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+</head>
+
+<body>
+
+    <!-- Offcanvas Trigger Icon -->
+    <button class="btn d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+        aria-controls="offcanvasMenu">
+        <i class="bi bi-list" style="font-size: 28px;"></i> <!-- Bootstrap Hamburger Icon -->
+    </button>
+
+    <!-- Header -->
+    <header class="header-container d-flex align-items-center justify-content-between px-3">
+        <div class="logo-title-container d-flex align-items-center">
+            <img src="assets/image/timer2.png" alt="Logo" class="ms-2">
+            <a class="ms-2 link-underline-opacity-0" href="#">NEODrive</a>
+        </div>
+        <div class="header-buttons d-none d-lg-block">
+            <a class="ms-3 link-underline-opacity-0" href="#">Login</a>
+            <a class="ms-3 link-underline-opacity-0" href="#">Sign Up</a>
+        </div>
+    </header>
+
+    <!-- Offcanvas Sidebar -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <a href="#" class="d-block mb-2">Login</a>
+            <a href="#" class="d-block">Sign Up</a>
+        </div>
+    </div>
+
+    <br><br>
+
+    <!-- Main Content -->
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            <h1>DRIVE YOUR FOCUS,<br>EARN YOUR REWARD</h1><br>
+            <h2>Welcome to NEODrive,<br>Your ultimate productivity companion. <br>
+                From managing your task with ease to<br> staying motivated with personalized
+                rewards.<br>NEODrive helps you to focus, achieve and <br>enjoy every step of your journey!
+            </h2><br>
+            <button type="button" class="custom-btn">Let's Start Now</button>
+        </div>
+        <img src="assets/image/index1.png" class="rounded ms-3 img-fluid custom-img" alt="Icon">
+    </div>
+
+    <!-- Bootstrap JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .d-flex {
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+
+        h1 {
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: italic;
+            font-size: 35px;
+        }
+
+        h2 {
+            font-size: 27px;
+        }
+
+        .custom-btn {
+            --bs-btn-padding-y: 0.5rem;
+            --bs-btn-padding-x: 1rem;
+            --bs-btn-font-size: 1rem;
+
+            background: linear-gradient(to right, #28a745, #218838);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
+            font-size: var(--bs-btn-font-size);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .custom-btn:hover {
+            background: linear-gradient(to right, #218838, #1e7e34);
+            transform: scale(1.05);
+        }
+
+        .custom-img {
+            max-width: 100%;
+            height: auto;
+            width: 450px;
+        }
+
+        @media (max-width: 768px) {
+            .d-flex {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .custom-img {
+                width: 400px;
+                height: 450px;
+            }
+
+            .d-flex h1 {
+                font-size: 35px;
+            }
+
+            .d-flex h2 {
+                font-size: 25px;
+            }
+        }
+    </style>
+
+</body>
+
+</html>
+
+
+//script.js  
+//timer operation
+let totalRounds, roundTime, breakTime, currentRound, endTime, isBreak, interval;
+
+function startRound() {
+    totalRounds = parseInt(document.getElementById('rounds').value);
+    roundTime = parseInt(document.getElementById('roundTime').value) * 60;
+    breakTime = parseInt(document.getElementById('breakTime').value) * 60;
+
+    if (!currentRound || currentRound > totalRounds) {
+        currentRound = 1;
+    }
+
+    isBreak = false;
+    endTime = Date.now() + roundTime * 1000;
+    document.getElementById('roundInfo').innerText = `Round ${currentRound} of ${totalRounds}`;
+    countdown();
+}
+
+function countdown() {
+    clearInterval(interval);
+
+    interval = setInterval(() => {
+        let rawTimeLeft = (endTime - Date.now()) / 1000;
+        let timeLeft = Math.ceil(rawTimeLeft); // ✅ Ensures no skipped seconds
+
+        updateTimerDisplay(timeLeft);
+
+        if (rawTimeLeft <= 0) { // ✅ Uses raw value to ensure it stops exactly at 00:00
+            clearInterval(interval);
+            updateTimerDisplay(0); // ✅ Explicitly show 00:00
+
+            if (!isBreak) {
+                if (currentRound < totalRounds) {
+                    alert(`Round ${currentRound} complete! Time for a break.`);
+                    isBreak = true;
+                    endTime = Date.now() + breakTime * 1000;
+                    document.getElementById('roundInfo').innerText = `Break Time!`;
+                    countdown();
+                } else {
+                    alert(`All rounds completed!`);
+                    document.getElementById('timer').innerText = '00:00';
+                    document.getElementById('roundInfo').innerText = "All rounds completed!";
+                }
+            } else {
+                alert(`Break over! Click 'Start Round' for the next round.`);
+                currentRound++;
+                if (currentRound <= totalRounds) {
+                    isBreak = false;
+                    endTime = Date.now() + roundTime * 1000;
+                    document.getElementById('roundInfo').innerText = `Round ${currentRound} of ${totalRounds}`;
+                }
+            }
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay(timeLeft) {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    document.getElementById('timer').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function resetTimer() {
+    clearInterval(interval);
+    document.getElementById('timer').innerText = "00:00";
+    document.getElementById('roundInfo').innerText = "";
+    currentRound = 0;
+}
+
+
+//
+
+
+
+
+styles work at timer.php:
+main-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        #timerContainerGroup {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            width: 700px;
+            margin: auto 0;
+            background-image: url("../assets/image/aurorabg.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            align-items: center;
+            /* Centers children horizontally */
+            justify-content: center;
+            /* Centers children vertically */
+        }
+
+
+
+        /* Timer Styling */
+        .timer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 400px;
+            height: 400px;
+            background: #fafdf8;
+            border-radius: 50%;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            border: 8px solid transparent;
+            background-image: linear-gradient(white, white),
+                conic-gradient(#4caf50, #ffeb3b, #f44336);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            margin-bottom: 20px;
+        }
+
+        /* Timer Display */
+        #timerContainer {
+            font-size: 50px;
+            font-weight: bold;
+            color: #199b15;
+        }
+
+        /* Ensure the "Set Timer" button is centered */
+        #timerContainerGroup button {
+            margin: 10px 0;
+        }
+
+        /* Center Timer Buttons */
+        #timerButtons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            /* Add spacing between buttons */
+            margin-top: 15px;
+        }
+
+        #roundInfo {
+            font-weight: bold;
+            font-size: 20px;
+            color: white;
+            text-align: center;
+            /* Centers text */
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            /* Ensures it spans the container width */
+            margin-bottom: 10px;
+            /* Adds some space below it */
+        }
+
+
+        .todo-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 100px);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            margin-right: 1rem;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            padding: 0.5rem 0.7rem;
+            /* Smaller padding */
+            border-radius: 5px;
+            /* Optional: makes it less rounded */
+            font-size: 1rem;
+            /* Smaller text */
+            border: none;
+            background:rgb(148, 190, 32);
+            color: #fff;
+
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background:rgb(95, 190, 39);
+        }
+
+        .todo {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .todo:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .task {
+            flex: 1;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .delete,
+        .edit {
+            cursor: pointer;
+            transition: transform 0.2s, color 0.3s;
+        }
+
+        .delete:hover {
+            transform: scale(1.1);
+            color: #ff4757;
+        }
+
+        .edit:hover {
+            transform: scale(1.1);
+            color:rgb(255, 255, 255);
+        }
+
+        svg {
+            fill: currentColor;
+        }
+
+
+//this is new to-do-list.php but no style and edit is at localhost
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .task { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ddd; }
+        .task.completed .task-name { text-decoration: line-through; color: gray; }
+        .task-details { display: none; font-size: 0.9em; color: #666; }
+        .buttons { display: flex; gap: 5px; }
+        button { cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>To-Do List</h2>
+    <input type="text" id="taskName" placeholder="Task Name">
+    <input type="text" id="taskDetails" placeholder="Task Details (Optional)">
+    <select id="priority">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+    </select>
+    <button onclick="addTask()">Add Task</button>
+    
+    <div id="taskList"></div>
+    
+    <script>
+        function addTask() {
+            let name = document.getElementById("taskName").value;
+            let details = document.getElementById("taskDetails").value;
+            let priority = document.getElementById("priority").value;
+            if (!name) return;
+            
+            let taskDiv = document.createElement("div");
+            taskDiv.classList.add("task");
+            taskDiv.innerHTML = `
+                <span class="task-name" onclick="toggleDetails(this)">${name} (${priority})</span>
+                <div class="task-details">${details}</div>
+                <div class="buttons">
+                    <button onclick="editTask(this)">Edit</button>
+                    <button onclick="deleteTask(this)">Delete</button>
+                    <input type="checkbox" onclick="markCompleted(this)">
+                </div>
+            `;
+            document.getElementById("taskList").appendChild(taskDiv);
+            document.getElementById("taskName").value = "";
+            document.getElementById("taskDetails").value = "";
+        }
+
+        function toggleDetails(element) {
+            let details = element.nextElementSibling;
+            details.style.display = details.style.display === "none" ? "block" : "none";
+        }
+
+        function editTask(button) {
+            let taskDiv = button.parentElement.parentElement;
+            let taskName = taskDiv.querySelector(".task-name");
+            let details = taskDiv.querySelector(".task-details");
+            
+            let newName = prompt("Edit task name:", taskName.textContent.split(" (")[0]);
+            let newDetails = prompt("Edit task details:", details.textContent);
+            
+            if (newName) taskName.textContent = newName + " (" + taskName.textContent.split(" (")[1];
+            if (newDetails !== null) details.textContent = newDetails;
+        }
+
+        function deleteTask(button) {
+            button.parentElement.parentElement.remove();
+        }
+
+        function markCompleted(checkbox) {
+            let taskDiv = checkbox.parentElement.parentElement;
+            taskDiv.classList.toggle("completed", checkbox.checked);
+        }
+    </script>
+</body>
+</html>
+
+
+//this is timer.php with unwanted todolist
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Round Timer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+    <header class="header-container">
+        <div class="logo-title-container">
+            <img src="../assets/image/timer2.png" alt="Logo">
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+                link-underline-opacity-75-hover" href="#">Timer</a>
+        </div>
+        <div class="header-buttons">
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="#">NeoSpace</a>
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="#">Collection</a>
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="#">Quotes</a>
+            <a href="profile.php" class="profile-icon">
+                <i class="fa-solid fa-user-circle"></i>
+            </a>
+
+        </div>
+
+    </header><br><br>
+
+
+    <div class="main-container">
+        <!-- Timer Section -->
+        <div id="timerContainerGroup">
+            <div id="roundInfo"></div>
+            <div class="timer">
+                <div id="timerContainer">
+                    <span id="timer">00:00</span>
+                </div>
+            </div>
+            <!-- Button trigger modal -->
+
+            <button type="button" class="btn btn-primary d-block mx-auto" data-bs-toggle="modal"
+                data-bs-target="#timerModal">
+                Set Timer
+            </button>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="timerModal" tabindex="-1" aria-labelledby="timerModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="timerModalLabel">Set Timer</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <form id="timerForm">
+                                <div class="mb-3">
+                                    <label for="rounds" class="form-label">Number of Rounds:</label>
+                                    <input type="number" id="rounds" class="form-control" value="1" min="1">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="roundTime" class="form-label">Round Duration (minutes):</label>
+                                    <input type="number" id="roundTime" class="form-control" value="25" min="1">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="breakTime" class="form-label">Break Duration (minutes):</label>
+                                    <input type="number" id="breakTime" class="form-control" value="5" min="1">
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="saveTimerSettings()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn timer-btn mt-3" id="timerButtons" style="display: none;">
+                <button type="button" class="btn btn-success" id="startRoundBtn" onclick="startRound()" disabled>
+                    Start Round
+                </button>
+                <button type="button" class="btn btn-warning" id="pauseBtn" onclick="pauseTimer()" disabled>
+                    Pause
+                </button>
+                <button type="button" class="btn btn-warning" id="startBreakBtn" onclick="startBreak()" disabled>
+                    Start Break
+                </button>
+                <button type="button" class="btn btn-danger" onclick="resetTimer()">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- To-Do List Section -->
+        <div class="todo-container">
+            <input type="text" placeholder="Add a new task...">
+            <button>Add</button>
+            <div id="task-list"></div>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap JavaScript (Required for Modal) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../script.js"></script>
+
+
+    <style>
+        button {
+            padding: 0.5rem 0.7rem; 
+            border-radius: 5px;     
+            font-size: 1rem;
+            border: none;
+            background: rgb(148, 190, 32);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: rgb(95, 190, 39);
+        }
+    </style>
+</body>
+
+</html>
+
+this is my very first photocard collection preview with large card image
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Round Timer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <header class="header-container">
+        <div class="logo-title-container">
+            <img src="../assets/image/timer2.png" alt="Logo">
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+                link-underline-opacity-75-hover" href="#">Your Photocards Collection</a>
+        </div>
+        <div class="header-buttons">
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="#">NeoSpace</a>
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="#">Collection</a>
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="#">Quotes</a>
+            <a href="profile.php" class="profile-icon">
+                <i class="fa-solid fa-user-circle"></i>
+            </a>
+
+        </div>
+
+    </header><br>
+
+    <div class="main-container">
+        <div class="pc-container">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <img src="../assets/image/timer2.png" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      </div>
+    </div>
+  </div>
+</div>
+        </div>
+    
+    </div>
+
+    
+    <!-- Bootstrap JavaScript (Required for Modal) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../script.js"></script>
+
+    <style> 
+
+        .pc-container card{
+            height:40px;
+        }
+    </style>
+   
+</body>
+
+    
+</html>
+
+
+
+//latest quotes.php with only heart icon<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Cards</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<header class="header-container">
+        <div class="logo-title-container">
+            <img src="../assets/image/timer2.png" alt="Logo">
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+                link-underline-opacity-75-hover" href="#">Motivational Quotes</a>
+        </div>
+        <div class="header-buttons">
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="timer.php">NeoSpace</a>
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="pccollection.php">Collection</a>
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+     link-underline-opacity-75-hover" href="">Quotes</a>
+            <a href="profile.php" class="profile-icon">
+                <i class="fa-solid fa-user-circle"></i>
+            </a>
+
+        </div>
+
+    </header><br>
+
+<!-- Container for cards -->
+<div class="container mt-4">
+
+    <!-- Quotes Container -->
+    <div class="row" id="quotesContainer">
+        <!-- Quotes will be inserted here dynamically -->
+    </div>
+</div>
+
+<a href="#" class="floating-icon ">
+<i class="fa-solid fa-heart-circle-check"></i></a>
+
+<script>
+    // Sample quotes array
+    let quotes = [
+    { id: 1, text: "Dreams don’t betray you. If you don’t give up, you will definitely achieve it someday.", author: "Mark Lee", pinned: false },
+    { id: 2, text: "I want to be a person who gives positive energy to others.", author: "Jaehyun", pinned: false },
+    { id: 3, text: "If you are confident, everything will work out.", author: "Taeyong", pinned: false },
+    { id: 4, text: "Every little step you take will get you closer to your dream.", author: "Haechan", pinned: false },
+    { id: 5, text: "You just have to work hard for yourself, not to impress anyone.", author: "Doyoung", pinned: false },
+    { id: 6, text: "Enjoy the process. Happiness is not in the destination, but in the journey.", author: "Johnny", pinned: false },
+    { id: 7, text: "Don’t be afraid to challenge yourself. That’s how you grow.", author: "Ten", pinned: false },
+    { id: 8, text: "Great things never come from comfort zones.", author: "Unknown", pinned: false },
+    { id: 9, text: "Do what you can, with what you have, where you are.", author: "Theodore Roosevelt", pinned: false },
+    { id: 10, text: "Believe in yourself and you will be unstoppable.", author: "Unknown", pinned: false },
+    { id: 11, text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius", pinned: false },
+    { id: 12, text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", pinned: false },
+    { id: 13, text: "The only way to achieve the impossible is to believe it is possible.", author: "Charles Kingsleigh", pinned: false },
+    { id: 14, text: "Don’t watch the clock; do what it does. Keep going.", author: "Sam Levenson", pinned: false }
+];
+
+
+    // Function to render quotes as Bootstrap cards
+    function renderQuotes() {
+        let container = document.getElementById("quotesContainer");
+        container.innerHTML = "";
+
+        // Sort: Pinned quotes first
+        let sortedQuotes = quotes.sort((a, b) => b.pinned - a.pinned);
+
+        sortedQuotes.forEach((quote) => {
+            let col = document.createElement("div");
+            col.className = "col-md-4 mb-3";
+
+            col.innerHTML = `
+   <div class="card text-bg-success mb-3" style="max-width: 18rem;">
+        <div class="card-header">
+            ${quote.author}
+            <i class="fa-solid fa-thumbtack pin-icon ${quote.pinned ? "pinned" : ""}" onclick="togglePin(${quote.id})"></i>
+        </div>
+        <div class="card-body">
+            <h5 class="card-text">${quote.text}</h5>
+        </div>
+    </div>
+`;
+
+
+            container.appendChild(col);
+        });
+    }
+
+    // Function to toggle pin status
+    function togglePin(id) {
+        let quote = quotes.find(q => q.id === id);
+        if (quote) {
+            quote.pinned = !quote.pinned; // Toggle pin status
+            renderQuotes(); // Re-render UI
+        }
+    }
+
+    // Load quotes on page load
+    document.addEventListener("DOMContentLoaded", renderQuotes);
+</script>
+<style>
+        .pin-icon {
+        cursor: pointer;
+        float: right;
+        color: gray;
+        transition: color 0.3s;
+    }
+    .pin-icon.pinned {
+        color: gold !important; /* Ensure the color changes when pinned */
+    }
+
+    .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+ 
+
+    </style>
+
+</body>
+</html>
