@@ -141,8 +141,7 @@ body {
     border-radius: 10px;
     width: 1200px;
       box-shadow: 0 10px 30px rgba(66, 121, 58, 0.527);
-
-    background-image: url("../assets/image/black.jpg");
+    background-image: url("../assets/image/grass.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     align-items: center;

@@ -21,7 +21,7 @@ check_role('admin');
     <header class="header-container">
         <div class="logo-title-container">
             <!-- Image will trigger the sidebar -->
-            <img src="../../assets/image/timer2.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
+            <img src="../../assets/image/clock.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" 
             href="#">Member Management Dashboard</a></div>
             <div class="header-buttons">
