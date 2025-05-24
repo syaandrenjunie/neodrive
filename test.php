@@ -1,11 +1,84 @@
+<?php
+// Include DB connection and session start
+include 'database/dbconn.php';
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to login if not logged in
+    header("Location: ../../login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+
+$mindful_note = "";
+$giphy_url = "";
+$success_message = "";
+
+// Fetch all mood check-in entries for the logged-in user
+$sql_all_checkins = "SELECT mood_type, user_note, checkin_at FROM mood_checkin WHERE user_id = ? ORDER BY checkin_at DESC LIMIT 5";
+$stmt_all_checkins = $conn->prepare($sql_all_checkins);
+$stmt_all_checkins->bind_param("i", $user_id);
+$stmt_all_checkins->execute();
+$result_all_checkins = $stmt_all_checkins->get_result();
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $mood_type = $_POST['mood_type'];
+    $user_note = $_POST['user_note'];
+
+    // Get a random ACTIVE mindful note for the selected mood
+    $sql_note = "SELECT mnotes_id, m_notes FROM mindful_notes WHERE mood_type = ? AND mnotes_status = 'Active' ORDER BY RAND() LIMIT 1";
+    $stmt_note = $conn->prepare($sql_note);
+    $stmt_note->bind_param("s", $mood_type);
+    $stmt_note->execute();
+    $result_note = $stmt_note->get_result();
+    $row = $result_note->fetch_assoc();
+    $mindful_note_id = $row['mnotes_id'];
+    $mindful_note = $row['m_notes'];
+
+    // Decide the Giphy search term based on the mood
+    $giphySearch = "";
+    if (in_array($mood_type, ['sad', 'scared', 'stressed'])) {
+        $giphySearch = 'motivational'; // Positive and uplifting content
+    } else {
+        $giphySearch = $mood_type; // For other moods, use the original mood type
+    }
+
+    // Call Giphy API (replace with your actual API key)
+    $apiKey = "YGFjXtFazQBGT89EKK0sNkYR5cDyVENr";
+    $giphyEndpoint = "https://api.giphy.com/v1/gifs/search?api_key=$apiKey&q=$giphySearch&limit=1&offset=0&rating=g&lang=en";
+
+    $giphy_response = file_get_contents($giphyEndpoint);
+    $giphy_data = json_decode($giphy_response, true);
+
+    if (isset($giphy_data['data'][0]['images']['downsized']['url'])) {
+        $giphy_url = $giphy_data['data'][0]['images']['downsized']['url'];
+    }
+
+    // Insert mood check-in into DB
+    $sql_insert = "INSERT INTO mood_checkin (user_id, mood_type, user_note, mindful_note_id) VALUES (?, ?, ?, ?)";
+    $stmt_insert = $conn->prepare($sql_insert);
+    $stmt_insert->bind_param("issi", $user_id, $mood_type, $user_note, $mindful_note_id);
+    $stmt_insert->execute();
+
+    // Update the result_all_checkins to include the new check-in
+    $stmt_all_checkins->execute();
+    $result_all_checkins = $stmt_all_checkins->get_result();
+
+    $success_message = "Your mood check-in has been recorded!";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mood Check-In Management Dashboard</title>
+    <title>Mood Check-In</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -13,226 +86,295 @@
 <body>
     <header class="header-container">
         <div class="logo-title-container">
-            <img src="../../assets/image/timer2.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-            <a class="link-underline link-underline-opacity-0" href="#">Mood Check-In Main Dashboard</a>
+            <img src="../../assets/image/clock.png" alt="Logo">
+            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+            link-underline-opacity-75-hover" href="#">Mood Check-In</a>
         </div>
         <div class="header-buttons">
-            <a class="link-underline link-underline-opacity-0" href="#">Lists</a>
-            <a class="link-underline link-underline-opacity-0" href="../mood/a-list-notes.php">Notes</a>
-
-            <a href="adminprofile.php" class="profile-icon">
-                <i class="fa-solid fa-user-circle"></i>
-            </a>
+            <a href="../pomodoro/timer.php">NeoSpace</a>
+            <a href="../pc/pccollection.php">Collection</a>
+            <a href="../quotes/quotes.php">Quotes</a>
+            <a href="../profile/profile.php" class="profile-icon"><i class="fa-solid fa-user-circle"></i></a>
         </div>
-    </header><br>
+    </header>
 
-    <!-- Include Sidebar -->
-    <?php include('../menus-sidebar.php'); ?>
+    <br>
 
-    <div class="mnotes-list">
-        <div class="search-container">
-            <form action="" method="GET">
-                <div class="input-group">
-                    <!-- Search Input -->
-                    <input type="text" class="form-control" name="search" id="searchInput"
-                        placeholder="Search mindful notes..."
-                        value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>"
-                        aria-label="Search mindful notes">
+<div class="container-fluid mt-4 px-3">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card p-4 shadow-sm mood-container">
+                    <h2 class="mb-4">🧠 Mood Check-In</h2>
+                    <form method="POST" action="">
 
-                    <!-- Search Icon as Submit Button -->
-                    <button type="submit" class="input-group-text btn btn-link" style="color: black">
-                        <i class="fa fa-search"></i>
-                    </button>
+                        <div class="mb-3">
+                            <label class="form-label">How are you feeling today?</label>
+                            <div class="mood-selector">
+                                <input type="radio" id="happy_jae" name="mood_type" value="happy">
+                                <label for="happy_jae">
+                                    <img src="assets/image/jae.png" alt="Happy - Jaehyun" title="Happy - Jaehyun"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" class="mood-img img-fluid" />
+                                </label>
 
-                    <!-- Clear Search Button -->
-                    <a href="admin-moods-page.php" class="btn btn-secondary input-group-text">Clear Search</a>
-                </div>
-            </form>
+                                <input type="radio" id="relieved_jun" name="mood_type" value="relieved">
+                                <label for="relieved_jun">
+                                    <img src="assets/image/chilljun.png" alt="Motivated - Xiaojun"
+                                        title="Relieved - Xiaojun" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        class="mood-img img-fluid" />
+                                </label>
 
-        </div>
+                                <input type="radio" id="motivated_mark" name="mood_type" value="motivated">
+                                <label for="motivated_mark">
+                                    <img src="assets/image/markmot.png" alt="Motivated - Mark" title="Motivated - Mark"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" class="mood-img img-fluid" />
+                                </label>
 
-        <table class="table table-striped table-hover mt-3">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Mood's Type</th>
-                    <th>User Notes</th>
-                    <th>Status</th>
-                    <th>Check-in At</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+                                <input type="radio" id="sad_renjun" name="mood_type" value="sad">
+                                <label for="sad_renjun">
+                                    <img src="assets/image/rjsad.png" alt="Sad - Renjun" title="Sad - Renjun"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" class="mood-img img-fluid" />
+                                </label>
 
-                // If there is no search term, it will just show all users.
-                $query = "SELECT m.*, 
-                 u.username, 
-                 n.m_notes 
-          FROM mood_checkin m
-          JOIN users u ON m.user_id = u.user_id
-          JOIN mindful_notes n ON m.mindful_note_id = n.mnotes_id";
+                                <input type="radio" id="stressed_nana" name="mood_type" value="stressed">
+                                <label for="stressed_nana">
+                                    <img src="assets/image/nanastress.png" alt="Stressed - Jaemin"
+                                        title="Stressed - Jaemin" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        class="mood-img img-fluid" />
+                                </label>
 
-
-
-                if (!empty($searchTerm)) {
-                    $query .= " WHERE user_note LIKE '%$searchTerm%' 
-                               OR mood_type LIKE '%$searchTerm%' 
-                               OR mood_status LIKE '%$searchTerm%' 
-                               OR mindful_note_id LIKE '%$searchTerm%' 
-                               OR checkin_at LIKE '%$searchTerm%'
-                               OR updated_at LIKE '%$searchTerm%'";
-
-                    // Check if the search term exactly matches 'active' or 'inactive'
-                    if (strtolower($searchTerm) === 'Active' || strtolower($searchTerm) === 'Inactive') {
-                        $query .= " OR mood_status = '$searchTerm'";
-                    }
-                }
-
-                $result = mysqli_query($conn, $query);
-                $i = 1;
-
-                if (mysqli_num_rows($result) > 0) {
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<tr>
-    <td>" . $i++ . "</td>
-    <td>{$row['mood_type']}</td>
-    <td class='text-wrap' style='max-width: 300px;'>{$row['user_note']}</td>
-    <td>{$row['mood_status']}</td>
-    <td>{$row['checkin_at']}</td>
-    <td> <!-- This was missing -->
-        <button class='btn btn-sm btn-primary view-moods-btn' 
-            data-bs-toggle='modal' 
-            data-bs-target='#moodsDetailModal' 
-            data-m_notes='{$row['user_note']}'
-            data-mood_type='{$row['mood_type']}'
-            data-mnotes_status='{$row['mood_status']}'
-            data-updated='{$row['checkin_at']}'
-            data-username='{$row['username']}'
-            data-mindful_note='{$row['m_notes']}'
-            title='View Mood Checkin'>
-            <i class='fa-solid fa-expand'></i>
-        </button>
-
-        <button class='btn btn-sm btn-warning edit-notes-btn' 
-            data-bs-toggle='modal' 
-            data-bs-target='#editNotesModal' 
-            data-mindful_note_id='{$row['mindful_note_id']}'
-            data-m_notes='{$row['m_notes']}'
-            data-mood_type='{$row['mood_type']}'
-            data-mnotes_status='{$row['mood_status']}'
-            title='Edit Notes'>
-            <i class='fa-solid fa-pencil text-white'></i>
-        </button>
-    </td> <!-- Make sure this td wraps both buttons -->
-</tr>";
-
-                    }
-                } else {
-                    echo "<tr><td colspan='9' style='text-align: center;'>No record found</td></tr>";
-                }
-
-                ?>
-            </tbody>
-        </table>
-
-        <!-- View Notes Modal -->
-        <div class="modal fade" id="notesDetailModal" tabindex="-1" aria-labelledby="notesDetailModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Mindful Note Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Note:</strong> <span id="modal-m_notes"></span></p>
-                        <p><strong>Mood Type:</strong> <span id="modal-mood_type"></span></p>
-                        <p><strong>Status:</strong> <span id="modal-mnotes_status"></span></p>
-                        <p><strong>Created At:</strong> <span id="modal-created"></span></p>
-                        <p><strong>Updated At:</strong> <span id="modal-updated"></span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Edit Notes Modal -->
-        <div class="modal fade" id="editNotesModal" tabindex="-1" aria-labelledby="editNotesModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <form action="update-notes.php" method="POST">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Mindful Note</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="mnotes_id" id="edit-mnotes_id">
-                            <div class="mb-3">
-                                <label for="edit-m_notes" class="form-label">Note</label>
-                                <textarea class="form-control" name="m_notes" id="edit-m_notes" rows="3"
-                                    required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="edit-mood_type" class="form-label">Mood Type</label>
-                                <input type="text" class="form-control" name="mood_type" id="edit-mood_type" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="edit-mnotes_status" class="form-label">Status</label>
-                                <select class="form-control" name="mnotes_status" id="edit-mnotes_status" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
+                                <input type="radio" id="scared_doyoung" name="mood_type" value="scared">
+                                <label for="scared_doyoung">
+                                    <img src="assets/image/doyscared.png" alt="Scared - Doyoung"
+                                        title="Scared - Doyoung" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        class="mood-img img-fluid" />
+                                </label>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+                        <div class="mb-3">
+                            <label for="userNote" class="form-label">Add your thoughts (optional)</label>
+                            <textarea class="form-control" name="user_note" id="userNote" rows="3"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">Share</button>
                         </div>
                     </form>
                 </div>
             </div>
+
+
+            <!-- Modal for Mindful Note and Giphy -->
+            <div class="modal fade" id="checkInModal" tabindex="-1" aria-labelledby="checkInModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="checkInModalLabel">Your Mood Check-In</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6><em><?= htmlspecialchars($mindful_note) ?></em></h6><br>
+                            <h5>Here's a GIF just for you:</h5>
+                            <?php if (!empty($giphy_url)): ?>
+                                <img src="<?= $giphy_url ?>" class="img-fluid" alt="Mood GIF">
+                            <?php else: ?>
+                                <p>No GIF available.</p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card p-4 shadow-sm mood-container">
+                    <h2 class="mb-4">🧠 Mood Check-In Records</h2>
+
+                    <?php if ($result_all_checkins->num_rows > 0): ?>
+                        <div class="d-flex flex-column gap-3">
+                            <?php while ($checkin = $result_all_checkins->fetch_assoc()): ?>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front mood-<?= strtolower($checkin['mood_type']) ?>">
+                                            <?= htmlspecialchars($checkin['mood_type']); ?>
+                                        </div>
+                                        <div class="flip-card-back ">
+                                            <p><strong>Note:</strong> <?= htmlspecialchars($checkin['user_note']); ?></p>
+                                            <p><strong>Checked In:</strong>
+                                                <?= date("F j, Y, g:i a", strtotime($checkin['checkin_at'])); ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endwhile; ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted">No mood check-ins found.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+
+
         </div>
+    </div>
 
-        <!-- Bootstrap JS (with Popper) -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Custom JavaScript for Sidebar Toggle -->
-        <script>
-            // Get the image element that will trigger the sidebar
-            const sidebarToggle = document.getElementById('sidebarToggle');
-
-            // Add click event to trigger sidebar
-            sidebarToggle.addEventListener('click', function () {
-                const sidebar = new bootstrap.Offcanvas(document.getElementById('offcanvasWithBothOptions'));
-                sidebar.show(); // Show the sidebar when the image is clicked
+    <script>
+        // Trigger the modal after successful submission
+        <?php if (!empty($success_message)): ?>
+            var myModal = new bootstrap.Modal(document.getElementById('checkInModal'), {
+                keyboard: false
             });
+            myModal.show();
+        <?php endif; ?>
+    </script>
+    <style>
+        .mood-container {
+            max-width: 600px;
+            /* Adjust this value to reduce or increase the width */
+            margin: 0 auto;
+            /* Center the container horizontally */
+            padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    width: 100%; /* Make sure it uses full width of column */
+        }
+
+        .modal-body img {
+            max-height: 300px;
+            /* Adjust this value as needed */
+            width: auto;
+            /* Maintain the aspect ratio */
+            display: block;
+            /* Center the image */
+            margin: 0 auto;
+            /* Center the image horizontally */
+        }
+
+        .mood-selector {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.mood-selector input[type="radio"] {
+    display: none;
+}
+
+.mood-selector label {
+    cursor: pointer;
+}
+
+.mood-selector img.mood-img {
+    width: 70px;
+    height:79px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+}
+
+.mood-selector input[type="radio"]:checked + label img {
+    transform: scale(1.15);
+    border: 2px solid #b3fc16;
+}
+
+        .mood-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .mood-img:hover {
+            transform: scale(1.1);
+        }
 
 
-        </script>
+        textarea {
+            display: block;
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+        }
 
-        <style>
-            .search-container {
-                margin-bottom: 10px;
-                display: flex;
-                justify-content: flex-start;
-                /* Align to the left */
-            }
+        .mood-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-            .search-form {
-                width: 800px;
-                max-width: 600px;
-                /* Adjust width as needed */
-            }
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 50px;
+            /* Increase this if it's too small */
+            perspective: 1000px;
+        }
 
-            .modal-lg {
-                max-width: 60%;
-                /* Adjust the width as needed */
-            }
-        </style>
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 50px;
+            /* Must be equal to flip-card height */
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background-color: #f8f9fa;
+        }
+
+
+        /* Optional mood type color coding */
+        .mood-happy {
+            background-color: #FFD700;
+            color: #000;
+        }
+
+        .mood-sad {
+            background-color: #6495ED;
+        }
+
+        .mood-stressed {
+            background-color: #FF6347;
+        }
+
+        .mood-relieved {
+            background-color: #20B2AA;
+        }
+
+        .mood-motivated {
+            background-color: rgb(43, 226, 150);
+        }
+
+        .mood-scared {
+            background-color: rgb(87, 17, 153);
+        }
+    </style>
 </body>
 
 </html>

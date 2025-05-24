@@ -11,21 +11,8 @@
 </head>
 
 <body>
-    <header class="header-container">
-        <div class="logo-title-container">
-            <img src="assets/image/clock.png" alt="Logo">
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-                link-underline-opacity-75-hover" href="#">NEODrive</a>
-        </div>
-        <div class="header-buttons">
-            
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-                link-underline-opacity-75-hover" href="login.php">Sign Up</a>
-        </div>
-    </header>
     
-    <br><br>
-    
+        
     <div class="d-flex align-items-center justify-content-between">
         <div>
             <h1>DRIVE YOUR FOCUS,<br>EARN YOUR REWARD</h1><br>
@@ -33,7 +20,7 @@
                 From managing your task with ease to<br> staying motivated with personalized
                 rewards.<br>NEODrive helps you to focus, achieve and <br>enjoy every step of your journey!
             </h2><br>
-            <button type="button" class="custom-btn">Let's Start Now</button>
+<button type="button" class="custom-btn" onclick="window.location.href='login.php'">Let's Start Now</button>
         </div>
         <img src="assets/image/index1.png" class="rounded ms-3 img-fluid custom-img" alt="Icon">
     </div>
