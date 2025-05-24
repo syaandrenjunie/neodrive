@@ -192,7 +192,6 @@ function addTask() {
 }
 
 
-
 function toggleDetails(element) {
     let details = element.nextElementSibling;
     details.style.display = details.style.display === "none" ? "block" : "none";
@@ -224,10 +223,49 @@ function saveTaskEdit() {
     bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
 }
 
+if (window.location.search.includes('edit_success=1')) {
+        const url = new URL(window.location);
+        url.searchParams.delete('edit_success');
+        window.history.replaceState({}, document.title, url);
+    }
+    
+document.addEventListener('DOMContentLoaded', function () {
+    // Select all delete forms
+    const deleteForms = document.querySelectorAll('.delete-task-form');
 
-function deleteTask(button) {
-    button.parentElement.parentElement.remove();
-}
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Stop immediate submission
+
+            const taskId = form.getAttribute('data-task-id');
+            const taskName = form.getAttribute('data-task-name');
+
+            Swal.fire({
+                title: `Are you sure you want to delete this task "${taskName}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it',
+                cancelButtonText: 'No, cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Are you absolutely sure?',
+                        text: "You won't be able to undo this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete permanently',
+                        cancelButtonText: 'No, keep it',
+                    }).then((secondResult) => {
+                        if (secondResult.isConfirmed) {
+                            form.submit(); // submit form for real now
+                        }
+                    });
+                }
+            });
+        });
+    });
+});
+
 
 
 function markCompleted(checkbox) {

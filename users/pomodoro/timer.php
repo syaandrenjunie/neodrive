@@ -197,17 +197,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['task_name'])) {
                 <div id="taskList" class="mt-3">
                     <?php
                     $query = "SELECT t.task_id, t.task_name, t.task_details, t.is_completed, p.level_name 
-FROM to_do_list t
-JOIN priority_levels p ON t.priority_id = p.priority_id
-WHERE t.user_id = $user_id
-ORDER BY 
-  t.is_completed ASC,  -- Uncompleted tasks first (0 = false)
-  CASE p.level_name     -- Sort by priority: High > Medium > Low
-    WHEN 'High' THEN 1
-    WHEN 'Medium' THEN 2
-    WHEN 'Low' THEN 3
-    ELSE 4
-  END";
+                        FROM to_do_list t
+                        JOIN priority_levels p ON t.priority_id = p.priority_id
+                        WHERE t.user_id = $user_id AND t.task_status = 'active'
+                        ORDER BY 
+                            t.is_completed ASC,  -- incomplete (0) first, completed (1) last
+                        CASE p.level_name
+                        WHEN 'High' THEN 1
+                        WHEN 'Medium' THEN 2
+                        WHEN 'Low' THEN 3
+                            ELSE 4
+                        END";
 
                     $result = mysqli_query($conn, $query);
 
@@ -216,28 +216,38 @@ ORDER BY
                             $isChecked = $row['is_completed'] ? 'checked' : '';
                             ?>
                             <div class="task">
-                                <span class="task-name <?= $row['is_completed'] ? 'completed-task' : '' ?>"
-                                    onclick="toggleDetails(this)">
-                                    <?= htmlspecialchars($row['task_name']) ?> (<?= ucfirst($row['level_name']) ?>)
-                                </span>
+                                <div class="task-info">
+                                    <span class="task-name <?= $row['is_completed'] ? 'completed-task' : '' ?>"
+                                        onclick="toggleDetails(this)">
+                                        <?= htmlspecialchars($row['task_name']) ?> (<?= ucfirst($row['level_name']) ?>)
+                                    </span>
 
-                               <div class="task-details" style="display: block; color: <?= $row['is_completed'] ? 'white' : 'initial' ?>;">
-    <?= nl2br(htmlspecialchars($row['task_details'])) ?>
-</div>
+                                    <div class="task-details" style="color: <?= $row['is_completed'] ? 'white' : 'initial' ?>;">
+                                        <?= nl2br(htmlspecialchars($row['task_details'])) ?>
+                                    </div>
+                                </div>
 
                                 <div class="buttons">
-                                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                        data-bs-target="#editTaskModal<?= $row['task_id'] ?>">
-                                        Edit
+                                    <button type="button" class="btn btn-link text-warning p-0" data-bs-toggle="modal"
+                                        data-bs-target="#editTaskModal<?= $row['task_id'] ?>" title="Edit Task">
+                                        <i class="fas fa-pencil-alt text-warning" style="opacity: 0.6;"></i>
                                     </button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteTask(this)">Delete</button>
+
+                                    <form method="POST" action="../todolist/u-delete-task.php" style="display:inline;"
+                                        class="delete-task-form" data-task-id="<?= $row['task_id'] ?>"
+                                        data-task-name="<?= htmlspecialchars($row['task_name']) ?>">
+                                        <input type="hidden" name="taskID" value="<?= $row['task_id'] ?>">
+                                        <button type="submit" class="btn btn-link text-danger p-0 delete-task-btn"
+                                            title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+
                                     <form method="POST" action="../todolist/u-complete-task.php" style="display:inline;">
                                         <input type="hidden" name="taskID" value="<?= $row['task_id'] ?>">
-                                        <!-- Hidden field to pass the task ID -->
                                         <input type="checkbox" name="is_completed" value="1" onchange="this.form.submit()"
                                             <?= $isChecked ? 'checked' : '' ?>>
                                     </form>
-
                                 </div>
                             </div>
                             <?php
@@ -246,10 +256,24 @@ ORDER BY
                         echo "<p>No tasks available.</p>";
                     endif;
                     ?>
-
                 </div>
+
             </div>
         </div>
+
+        <?php if (isset($_SESSION['message'])): ?>
+            <script>
+                Swal.fire({
+                    icon: <?= strpos($_SESSION['message'], 'successfully') !== false ? "'success'" : "'error'" ?>,
+                    title: <?= strpos($_SESSION['message'], 'successfully') !== false ? "'Success!'" : "'Oops!'" ?>,
+                    text: <?= json_encode($_SESSION['message']) ?>,
+                    confirmButtonText: 'OK'
+                });
+            </script>
+            <?php
+            unset($_SESSION['message']);
+        endif;
+        ?>
 
         <?php if (isset($_SESSION['task_completed']) && $_SESSION['task_completed']): ?>
             <script>
@@ -264,39 +288,74 @@ ORDER BY
         <?php endif; ?>
 
 
-        <!-- Edit Task Modal -->
-        <div class="modal fade" id="editTaskModal<?= $row['task_id'] ?>" tabindex="-1"
-            aria-labelledby="editTaskLabel<?= $task['task_id'] ?>" aria-hidden="true">
-            <div class="modal-dialog">
-                <form method="POST" action="update_task.php">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editTaskLabel<?= $task['task_id'] ?>">Edit Task</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <?php
+        // Reset result pointer and fetch rows again to generate modals
+        mysqli_data_seek($result, 0);
+        while ($row = mysqli_fetch_assoc($result)):
+            ?>
+            <div class="modal fade" id="editTaskModal<?= $row['task_id'] ?>" tabindex="-1"
+                aria-labelledby="editTaskModalLabel<?= $row['task_id'] ?>" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form method="POST" action="../todolist/u-edit-task.php">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editTaskModalLabel<?= $row['task_id'] ?>">Edit Task</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <input type="hidden" name="task_id" value="<?= $row['task_id'] ?>">
+
+                                <div class="mb-3">
+                                    <label for="editTaskName<?= $row['task_id'] ?>" class="form-label">Task Name</label>
+                                    <input type="text" class="form-control" id="editTaskName<?= $row['task_id'] ?>"
+                                        name="task_name" value="<?= htmlspecialchars($row['task_name']) ?>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="editTaskDetails<?= $row['task_id'] ?>" class="form-label">Task
+                                        Details</label>
+                                    <textarea class="form-control" id="editTaskDetails<?= $row['task_id'] ?>"
+                                        name="task_details"><?= htmlspecialchars($row['task_details']) ?></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="editPriority<?= $row['task_id'] ?>" class="form-label">Priority
+                                        Level</label>
+                                    <select class="form-select" id="editPriority<?= $row['task_id'] ?>" name="priority"
+                                        required>
+                                        <?php foreach ($priorityLevels as $level): ?>
+                                            <option value="<?= $level['priority_id'] ?>"
+                                                <?= $level['level_name'] === $row['level_name'] ? 'selected' : '' ?>>
+                                                <?= ucfirst($level['level_name']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="task_id" value="<?= $task['task_id'] ?>">
-                            <input type="text" name="task_name" class="form-control"
-                                value="<?= htmlspecialchars($task['task_name']) ?>" required>
-                            <textarea name="task_details"
-                                class="form-control mt-2"><?= htmlspecialchars($task['task_details']) ?></textarea>
-                            <select name="priority" class="form-select mt-2">
-                                <?php foreach ($priorityLevels as $level): ?>
-                                    <option value="<?= $level['priority_id'] ?>"
-                                        <?= $task['priority_id'] == $level['priority_id'] ? 'selected' : '' ?>>
-                                        <?= ucfirst($level['level_name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Save Changes</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+        <?php endwhile; ?>
+
+        <?php if (isset($_GET['edit_success']) && $_GET['edit_success'] == 1): ?>
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Task updated!',
+                    text: 'Your task was edited successfully.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        <?php endif; ?>
+
 
     </div>
     </div>
@@ -304,7 +363,7 @@ ORDER BY
 
     <!-- Bootstrap JavaScript (Required for Modal) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="../../script.js"></script>
+    <script src="../../script.js"></script>
     <script>
         function markCompleted(checkbox) {
             const taskID = checkbox.getAttribute('data-task-id');
@@ -318,7 +377,7 @@ ORDER BY
                     confirmButtonText: "Nice!"
                 });.then(() => {
                     // Send update to PHP
-                    fetch('update_task.php', {
+                    fetch('u-update-task.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
@@ -337,26 +396,31 @@ ORDER BY
             }
         }
 
-       document.addEventListener('DOMContentLoaded', function() {
-    <?php if ($show_unmarked_alert): ?>
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'You have successfully unmarked the task.',
-            timer: 2000,
-            showConfirmButton: false
+        document.addEventListener('DOMContentLoaded', function () {
+            <?php if ($show_unmarked_alert): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'You have successfully unmarked the task.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            <?php endif; ?>
         });
-    <?php endif; ?>
-});
+
+
     </script>
 
     <style>
+        #timerContainerGroup {
+            background-image: url("../assets/image/grass.jpg");
+        }
+
         .completed-task {
             text-decoration: line-through;
             color: white;
         }
 
-        
         /* Base style with white background */
         input[type="text"],
         textarea,
@@ -381,7 +445,8 @@ ORDER BY
         select:hover {
             border-color: rgb(0, 255, 76);
             /* Neon blue border */
-box-shadow: 0 0 8px rgb(107, 250, 88); /* ✅ fixed */
+            box-shadow: 0 0 8px rgb(107, 250, 88);
+            /* ✅ fixed */
             /* Neon glow effect */
             outline: none;
         }

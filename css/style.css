@@ -140,8 +140,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     width: 1200px;
-      box-shadow: 0 10px 30px rgba(66, 121, 58, 0.527);
-    background-image: url("../assets/image/grass.jpg");
+      box-shadow: 0 10px 30px rgba(153, 245, 139, 0.856);
     background-repeat: no-repeat;
     background-size: cover;
     align-items: center;
@@ -149,8 +148,7 @@ body {
     justify-content: center;
     /* Centers children vertically */
   }
-  
-  
+    
   
   /* Timer Styling */
   .timer {
@@ -224,11 +222,7 @@ body {
     color: gray;
   }
   
-  .task-details {
-    display: none;
-    font-size: 0.9em;
-    color: #666;
-  }
+  
   
   .buttons {
     display: flex;
@@ -243,17 +237,15 @@ body {
   
   .todo-container {
     flex: 1;
-    background: rgba(93, 150, 67, 0.979);
+    background: rgba(177, 241, 148, 0.979);
     padding: 2rem;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(152, 241, 140, 0.527);
+    box-shadow: 0 10px 30px rgb(34, 255, 5);
     max-width: 800px;
     margin-left: 30px; /* Pushes the to-do list away from the timer */
-  
-    
+      
   }
-  
-  
+    
   .modal-footer {
     display: flex;
     gap: 10px;
