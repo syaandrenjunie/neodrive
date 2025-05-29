@@ -4,7 +4,7 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
-    padding-top: 80px;
+    padding-top: 40px;
     min-width: 1024px;
     overflow-x: auto;
     z-index: 1;
@@ -17,7 +17,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("../assets/image/flower1.jpg");
+    background-image: url("../assets/image/city.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -32,8 +32,8 @@ body {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 15px 5px;
-    background-color: #2a573b;
+    padding: 5px 5px;
+    background-color: #2f572a;
     color: rgb(159, 252, 106);
     position: fixed;
     top: 0;
@@ -72,10 +72,10 @@ body {
     margin: 0;
     padding: 5px;
     /* Reduce top and bottom padding */
-    color: #4aff44;
+    color: #a8ff44;
     cursor: pointer;
     font-weight: bold;
-    font-size: 23px;
+    font-size: 20px;
     text-decoration: none;
     /* Removes underline */
     transition: 0.3s;
@@ -100,7 +100,7 @@ body {
     /* Adjust spacing between buttons */
     color: #4aff44;;
     border: none;
-    padding: 10px 10px;
+    padding: 5px 8px;
     border-radius: 5px;
     cursor: pointer;
     text-decoration: none;
@@ -121,7 +121,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 20px;
+    gap: 5px;
     padding: 20px;
     width: 100%;
     /* Ensure it takes full width */
@@ -137,12 +137,10 @@ body {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    padding: 20px;
+    padding: 5px;
     border-radius: 10px;
-    width: 1200px;
-      box-shadow: 0 10px 30px rgba(153, 245, 139, 0.856);
-    background-repeat: no-repeat;
-    background-size: cover;
+    width: 1000px;
+    
     align-items: center;
     /* Centers children horizontally */
     justify-content: center;
@@ -156,7 +154,7 @@ body {
     align-items: center;
     justify-content: center;
     width: 400px;
-    height: 400px;
+    height: 350px;
     background: #fafdf8;
     border-radius: 50%;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -169,7 +167,7 @@ body {
       conic-gradient(#4caf50, #ffeb3b, #f44336);
     background-origin: border-box;
     background-clip: content-box, border-box;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
   }
   
   /* Timer Display */
@@ -190,7 +188,7 @@ body {
     justify-content: center;
     gap: 10px;
     /* Add spacing between buttons */
-    margin-top: 10px;
+    margin-top: 5px;
   }
   
   #roundInfo {
@@ -216,13 +214,7 @@ body {
     padding: 10px;
     border-bottom: 1px solid #ddd;
   }
-  
-  .task.completed .task-name {
-    text-decoration: line-through;
-    color: gray;
-  }
-  
-  
+   
   
   .buttons {
     display: flex;
@@ -241,8 +233,8 @@ body {
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgb(34, 255, 5);
-    max-width: 800px;
-    margin-left: 30px; /* Pushes the to-do list away from the timer */
+    max-width: 620px;
+    margin-left: 70px; /* Pushes the to-do list away from the timer */
       
   }
     
@@ -275,11 +267,8 @@ body {
   
   .profile-icon {
     font-size: 15px;
-    /* Adjust icon size */
     color: #333;
-    /* Change color */
     margin-left: 5px;
-    /* Add space after Quotes */
     transition: color 0.3s ease-in-out;
   }
   
@@ -302,14 +291,6 @@ body {
     transform: scale(1.1);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   }
-  
-  /* Reduce row spacing 
-  .collection-container .row {
-    margin-top: 30px;
-    --bs-gutter-x: 5px;
-    
-    --bs-gutter-y: 5px;
-  }*/
   
   /* Reduce modal image size */
   .modal-img {
@@ -335,7 +316,7 @@ body {
   .card-header {
     font-weight: bold;
     background-color: #8cd615; /* Green shade */
-    color: white;
+    color: #8a8585;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     display: flex;
@@ -346,7 +327,7 @@ body {
   /* Text styling inside the card */
   .card-text {
     font-size: 18px;
-    color: #f5eeee;
+    color: #585252;
     font-style: italic;
   }
   

@@ -9,18 +9,51 @@ function saveTimerSettings() {
     timeLeft = roundTime;
     updateTimerDisplay(timeLeft);
 
+    // Update round info and enable buttons
     document.getElementById('roundInfo').innerText = `Set for ${totalRounds} rounds, ${roundTime / 60} min per round, ${breakTime / 60} min break.`;
     document.getElementById('startRoundBtn').disabled = false;
     document.getElementById('startBreakBtn').disabled = true;
     document.getElementById('pauseBtn').disabled = true;
-
-    // Show timer buttons
     document.getElementById('timerButtons').style.display = 'block';
 
     // Hide modal
     let modal = bootstrap.Modal.getInstance(document.getElementById('timerModal'));
     modal.hide();
+
+    // Send to database
+fetch('users/pomodoro/u-save-timer.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `total_rounds=${totalRounds}&round_duration=${roundTime}&break_duration=${breakTime}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'New Pomodoro session is ready!',
+                showConfirmButton: false,
+                timer: 1800
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error saving session',
+                text: data.error
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Connection error',
+            text: error
+        });
+    });
 }
+
 
 function startRound() {
     if (isRunning) return;

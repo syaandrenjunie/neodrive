@@ -91,41 +91,6 @@ if ($result && mysqli_num_rows($result) > 0) {
     <i class="fa-solid fa-heart-circle-check"></i>
 </a>
 
-
-<!-- Mood Check-in Modal -->
-<div class="modal fade" id="moodCheckinModal" tabindex="-1" aria-labelledby="moodCheckinModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="moodCheckinModalLabel">Mood Check-in</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="moodCheckinForm">
-                    <div class="mb-3">
-                        <label for="moodType" class="form-label">How are you feeling?</label>
-                        <select class="form-select" id="moodType" name="mood_type" required>
-                            <option value="happy">Happy</option>
-                            <option value="stressed">Stressed</option>
-                            <option value="motivated">Motivated</option>
-                            <option value="sad">Sad</option>
-                            <option value="relieved">Relieved</option>
-                            <option value="scared">Scared</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="userNote" class="form-label">Add a note (optional)</label>
-                        <textarea class="form-control" id="userNote" name="user_note" rows="3"></textarea>
-                    </div>
-                    <input type="hidden" name="user_id" value="1"> <!-- Replace with dynamic user ID -->
-                    <button type="submit" class="btn btn-primary w-100">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <script>
     // Sample quotes array
     let quotes = <?php echo json_encode($quotes); ?>;
@@ -145,7 +110,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             col.className = "col-md-3 mb-2";
 
             col.innerHTML = `
-   <div class="card text-bg-success mb-3" style="max-width: 18rem;">
+<div class="card mb-3" style="max-width: 18rem; background-color:rgb(193, 241, 116);">
         <div class="card-header">
             ${quote.author}
             <i class="fa-solid fa-thumbtack pin-icon ${quote.pinned ? "pinned" : ""}" onclick="togglePin(${quote.id})"></i>
@@ -208,13 +173,10 @@ function togglePin(id) {
     });
 }
 
-
-
     // Load quotes on page load
     document.addEventListener("DOMContentLoaded", renderQuotes);
 
      
-
     
 </script>
 

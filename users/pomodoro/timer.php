@@ -1,54 +1,14 @@
 <?php
-// Include DB connection and session start
+// Include DB connection and session start already in other file
 include '../../database/dbconn.php';
-session_start();
+include '../todolist//u-todolist.php';
 
-// Check if the user is logged in by verifying session data
 if (!isset($_SESSION['user_id'])) {
-    // Redirect to login if the user is not logged in
     header("Location: ../../login.php");
     exit();
 }
 
-// Retrieve the user ID from the session
 $user_id = $_SESSION['user_id'];
-
-$show_unmarked_alert = false;
-
-if (isset($_SESSION['unmarked_task']) && $_SESSION['unmarked_task'] === true) {
-    $show_unmarked_alert = true;
-    unset($_SESSION['unmarked_task']);
-}
-
-// Fetch priority levels from the database
-$priorityQuery = "SELECT * FROM priority_levels";
-$priorityResult = mysqli_query($conn, $priorityQuery);
-if (!$priorityResult) {
-    die('Error fetching priority levels: ' . mysqli_error($conn));
-}
-
-$priorityLevels = [];
-while ($row = mysqli_fetch_assoc($priorityResult)) {
-    $priorityLevels[] = $row;
-}
-
-// Handle task creation (POST request)
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['task_name'])) {
-    $task_name = mysqli_real_escape_string($conn, $_POST['task_name']);
-    $task_details = mysqli_real_escape_string($conn, $_POST['task_details']);
-    $priority_id = $_POST['priority']; // Priority ID selected from dropdown
-
-    // Insert the new task into the to_do_list table
-    $sql = "INSERT INTO to_do_list (user_id, task_name, task_details, priority_id) VALUES ('$user_id', '$task_name', '$task_details', '$priority_id')";
-    if (mysqli_query($conn, $sql)) {
-        // Set session flag to indicate success
-        $_SESSION['task_success'] = true; // set flag
-        header("Location: " . $_SERVER['PHP_SELF']); // redirect to avoid form resubmission
-        exit();
-    } else {
-        echo "Error: " . mysqli_error($conn);
-    }
-}
 
 ?>
 
@@ -126,37 +86,104 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['task_name'])) {
             <div class="modal fade" id="timerModal" tabindex="-1" aria-labelledby="timerModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="timerModalLabel">Set Timer</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
 
-                        <div class="modal-body">
-                            <form id="timerForm">
+                        <form id="timerForm" method="POST" action="u-save-timer.php">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="timerModalLabel">Set Timer</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
                                 <div class="mb-3">
                                     <label for="rounds" class="form-label">Number of Rounds:</label>
-                                    <input type="number" id="rounds" class="form-control" value="1" min="1">
+                                    <input type="number" id="rounds" name="total_rounds" class="form-control" value="1"
+                                        min="1">
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="roundTime" class="form-label">Round Duration (minutes):</label>
-                                    <input type="number" id="roundTime" class="form-control" value="25" min="1">
+                                    <input type="number" id="roundTime" name="round_duration" class="form-control"
+                                        value="25" min="1">
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="breakTime" class="form-label">Break Duration (minutes):</label>
-                                    <input type="number" id="breakTime" class="form-control" value="5" min="1">
+                                    <input type="number" id="breakTime" name="break_duration" class="form-control"
+                                        value="5" min="1">
                                 </div>
-                            </form>
-                        </div>
+                            </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="saveTimerSettings()">Save</button>
-                        </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+
                     </div>
                 </div>
             </div>
+
+            <?php
+include '../../database/dbconn.php';
+
+if (isset($_GET['add_success']) && $_GET['add_success'] == 1) {
+    $user_id = $_SESSION['user_id'] ?? null;
+    $session_id = (int)($_GET['session_id'] ?? 0);
+
+    // Default values (used if session fetch fails)
+    $totalRounds = 1;
+    $roundDuration = 25 * 60;
+    $breakDuration = 5 * 60;
+
+    if ($user_id && $session_id) {
+        $stmt = $conn->prepare("SELECT total_rounds, round_duration, break_duration FROM timer_sessions WHERE session_id = ? AND user_id = ?");
+        $stmt->bind_param("ii", $session_id, $user_id);
+        $stmt->execute();
+        $stmt->bind_result($totalRounds, $roundDuration, $breakDuration);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Convert durations to seconds
+        $roundDuration *= 60;
+        $breakDuration *= 60;
+    }
+    ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: '🎯 New Pomodoro Session Ready',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+
+        let totalRounds = <?= (int)$totalRounds ?>;
+        let roundTime = <?= (int)$roundDuration ?>;
+        let breakTime = <?= (int)$breakDuration ?>;
+        let currentRound = 1;
+        let timeLeft = roundTime;
+
+        document.getElementById('rounds').value = totalRounds;
+        document.getElementById('roundTime').value = roundTime / 60;
+        document.getElementById('breakTime').value = breakTime / 60;
+
+        function updateTimerDisplay(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        document.getElementById('timer').textContent =
+            `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    }
+
+        updateTimerDisplay(timeLeft);
+        document.getElementById('roundInfo').innerText = `Set for ${totalRounds} rounds, ${roundTime / 60} min per round, ${breakTime / 60} min break.`;
+        document.getElementById('startRoundBtn').disabled = false;
+        document.getElementById('startBreakBtn').disabled = true;
+        document.getElementById('pauseBtn').disabled = true;
+        document.getElementById('timerButtons').style.display = 'block';
+    </script>
+<?php } ?>
+
+
 
             <div class="btn timer-btn mt-3" id="timerButtons" style="display: none;">
                 <button type="button" class="btn btn-success" id="startRoundBtn" onclick="startRound()" disabled>
@@ -391,8 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['task_name'])) {
                         });
                 });
             } else {
-                // Optional: handle unchecking if needed
-                // (e.g., you could revert the checkbox, show a different alert, etc.)
+
             }
         }
 
@@ -408,24 +434,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['task_name'])) {
             <?php endif; ?>
         });
 
+        
+        </script>
 
-    </script>
 
-    <style>
-        #timerContainerGroup {
-            background-image: url("../assets/image/grass.jpg");
+        <style>
+            #timerContainerGroup {
+                background - image: url("../assets/image/grass.jpg");
         }
 
-        .completed-task {
-            text-decoration: line-through;
-            color: white;
+            .completed-task {
+                text - decoration: line-through;
+            color: darkred;
         }
 
-        /* Base style with white background */
-        input[type="text"],
-        textarea,
-        select {
-            background-color: #fff;
+            /* Base style with white background */
+            input[type="text"],
+            textarea,
+            select {
+                background - color: #fff;
             /* White background */
             color: #000;
             /* Black text for contrast */
@@ -436,23 +463,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['task_name'])) {
             transition: 0.3s ease;
         }
 
-        /* Neon border effect on focus or hover */
-        input[type="text"]:focus,
-        input[type="text"]:hover,
-        textarea:focus,
-        textarea:hover,
-        select:focus,
-        select:hover {
-            border-color: rgb(0, 255, 76);
-            /* Neon blue border */
+            /* Neon border effect on focus or hover */
+            input[type="text"]:focus,
+            input[type="text"]:hover,
+            textarea:focus,
+            textarea:hover,
+            select:focus,
+            select:hover {
+            border - color: rgb(0, 255, 76);
             box-shadow: 0 0 8px rgb(107, 250, 88);
-            /* ✅ fixed */
-            /* Neon glow effect */
             outline: none;
         }
-    </style>
+        </style>
 
 
-</body>
+</body >
 
-</html>
+</html >
