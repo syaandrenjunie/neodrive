@@ -1,7 +1,6 @@
 <?php
-include("../../include/auth.php"); // Include the authentication file
+include("../../include/auth.php"); 
 
-// Check if the user is an admin
 check_role('admin');
 
 ?>
@@ -23,26 +22,16 @@ check_role('admin');
 <body>
     <header class="header-container">
         <div class="logo-title-container">
-            <!-- Timer image linked to sidebar toggle -->
-            <img src="../../assets/image/clock.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
+                <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
                 link-underline-opacity-75-hover" href="#">Admin Main Dashboard</a>
         </div>
         <div class="header-buttons">
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="timer.php">NeoSpace</a>
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="#">Collection</a>
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="quotes.php">Quotes</a>
             <a href="adminprofile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
-
         </div>
 
-    </header><br>
+    </header><br><br>
 
     <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>
@@ -50,23 +39,63 @@ check_role('admin');
     <!-- Bootstrap JS (with Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom JavaScript for Sidebar Toggle -->
-    <script>
-        // Get the image element that will trigger the sidebar
-        const sidebarToggle = document.getElementById('sidebarToggle');
 
-        // Add click event to trigger sidebar
-        sidebarToggle.addEventListener('click', function () {
-            const sidebar = new bootstrap.Offcanvas(document.getElementById('offcanvasWithBothOptions'));
-            sidebar.show(); // Show the sidebar when the image is clicked
-        });
-    </script>
     <style>
         .equal-height {
             display: flex;
             flex-direction: column;
             height: 100%;
             width: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            /* Prevent horizontal scroll */
+        }
+
+        .static-sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgb(243, 247, 237);
+            padding: 20px 10px;
+            overflow-y: auto;
+            border-right: 1px solid #ddd;
+            z-index: 1030;
+        }
+
+        .header-container {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: calc(100% - 250px); /* Fix overflow caused by sidebar */
+            margin-left: 250px; /* Reserve space for sidebar */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1040;
+        }
+
+        .profile-icon {
+
+            margin-left: 15px;
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            min-width: 80px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            margin-top: 60px;
+            padding: 20px;
         }
     </style>
 

@@ -4,47 +4,35 @@ check_role('admin');
 include '../../database/dbconn.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $member_name = mysqli_real_escape_string($conn, $_POST['quotes_text']); // Assuming 'quotes_text' is actually the member's name
-    $member_type = mysqli_real_escape_string($conn, $_POST['type']);
+    $member_type = mysqli_real_escape_string($conn, $_POST['member_type']);
 
-    // Determine which member_id is selected
-    $member_id = '';
-    if (isset($_POST['nct_member_id']) && !empty($_POST['nct_member_id'])) {
-        $member_id = $_POST['nct_member_id'];
-    } elseif (isset($_POST['other_member_id']) && !empty($_POST['other_member_id'])) {
-        $member_id = $_POST['other_member_id'];
+    // Handle member name
+    if ($member_type === 'NCT') {
+        $member_name = mysqli_real_escape_string($conn, $_POST['member_name']);
+        $subunit = mysqli_real_escape_string($conn, $_POST['subunit'] ?? '');
+    } else {
+        $member_name = mysqli_real_escape_string($conn, $_POST['other_member_name']);
+        $subunit = 'None';
     }
 
-    // Validation
-    if (empty($member_id)) {
+    // Basic validation
+    if (empty($member_name)) {
         echo "<script>
-            alert('Please select a member.');
+            alert('Please enter a member name.');
             window.history.back();
         </script>";
         exit;
     }
 
-    $member_id = mysqli_real_escape_string($conn, $member_id);
-
-    // You may need to define subunit from form input if applicable
-    $subunit = mysqli_real_escape_string($conn, $_POST['subunit'] ?? '');
-
-    // Insert into member table
-    $sql = "INSERT INTO member (member_name, member_type, subunit, member_id) 
-            VALUES ('$member_name', '$member_type', '$subunit', '$member_id')";
+    // INSERT query
+    $sql = "INSERT INTO member (member_name, member_type, subunit) 
+            VALUES ('$member_name', '$member_type', '$subunit')";
 
     if (mysqli_query($conn, $sql)) {
-        echo "<script>
-            alert('Member added successfully!');
-            window.location.href = '../maindb/admin-member-page.php';
-        </script>";
+        header("Location: a-add-member.php?success=1");
+        exit;
     } else {
-        echo "<script>
-            alert('Failed to add member: " . mysqli_error($conn) . "');
-            window.history.back();
-        </script>";
+        echo "Error: " . mysqli_error($conn);
     }
-
-    mysqli_close($conn);
 }
 ?>

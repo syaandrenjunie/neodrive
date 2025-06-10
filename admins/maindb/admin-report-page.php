@@ -25,18 +25,13 @@ check_role('admin');
             data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" 
             href="#">Report Management Dashboard</a></div>
             <div class="header-buttons">
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="timer.php">NeoSpace</a>
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="#">Collection</a>
-            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="quotes.php">Quotes</a>
+            
             <a href="profile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
 
         </div>
-    </header><br>
+    </header><br><br>
 
     <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>

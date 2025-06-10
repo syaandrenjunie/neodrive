@@ -35,7 +35,7 @@ check_role('admin');
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>
-    </header><br>
+    </header><br><br>
 
     <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>
@@ -155,7 +155,7 @@ check_role('admin');
                               <button class='btn btn-sm btn-warning edit-quote-btn' 
                                     data-bs-toggle='modal' 
                                     data-bs-target='#editQuoteModal' 
-    data-quotes_id='{$row['quotes_id']}'
+                                    data-quotes_id='{$row['quotes_id']}'
                                     data-quotes_text='{$row['quotes_text']}'
                                     data-member_name='{$row['member_name']}'
                                     data-type='{$row['type']}'
@@ -218,15 +218,15 @@ check_role('admin');
                             <div class="mb-3">
                                 <label for="edit-member_name" class="form-label"><strong>Member's Name</strong></label>
                                 <select class="form-select" id="edit-member_name" name="member_id" onchange="toggleOtherInput()" required>
-        <option value="" disabled selected>Choose NCT member...</option>
-        <?php
-        include '../../database/dbconn.php';
-        $result = mysqli_query($conn, "SELECT member_id, member_name FROM member");
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo "<option value='{$row['member_id']}'>{$row['member_name']}</option>";
-        }
-        ?>
-    </select>
+                                    <option value="" disabled selected>Choose NCT member...</option>
+                                    <?php
+                                    include '../../database/dbconn.php';
+                                    $result = mysqli_query($conn, "SELECT member_id, member_name FROM member");
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        echo "<option value='{$row['member_id']}'>{$row['member_name']}</option>";
+                                    }
+                                    ?>
+                                </select>
                             </div>
 
                             <!-- Other Member Input -->

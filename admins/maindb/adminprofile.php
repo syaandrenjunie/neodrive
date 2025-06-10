@@ -31,12 +31,7 @@ check_role('admin');
                 link-underline-opacity-75-hover" href="#">Admin Profile</a>
         </div>
     <div class="header-buttons">
-      <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-            link-underline-opacity-75-hover" href="timer.php">NeoSpace</a>
-      <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-            link-underline-opacity-75-hover" href="#">Collection</a>
-      <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-            link-underline-opacity-75-hover" href="quotes.php">Quotes</a>
+      
       <div class="dropdown">
         <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown"
           aria-expanded="false">
@@ -49,7 +44,7 @@ check_role('admin');
       </div>
 
     </div>
-  </header>
+    </header><br><br>
 
   <!-- Include Sidebar -->
   <?php include('../menus-sidebar.php'); ?>

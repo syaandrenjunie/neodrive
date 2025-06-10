@@ -1,24 +1,16 @@
 <?php
-include("../../include/auth.php"); // Include the authentication file
+include("../../include/auth.php"); 
 
-// Check if the user is an admin
 check_role('admin');
 
+include '../../database/dbconn.php';
+
+// Fetch all members with member_type 'NCT'
+$membersQuery = "SELECT member_name FROM member WHERE member_type = 'NCT' ORDER BY member_name ASC";
+$membersResult = mysqli_query($conn, $membersQuery);
+
 ?>
 
-<?php
-if (isset($_GET['update'])) {
-    if ($_GET['update'] === 'success') {
-        echo "<script>alert('Photocard updated successfully!');</script>";
-        // Redirect to remove the query parameter from the URL
-        echo "<script>window.location.href = 'admin-photocards-page.php';</script>";
-    } elseif ($_GET['update'] === 'fail') {
-        echo "<script>alert('Failed to update photocard. Please try again.');</script>";
-        // Redirect to remove the query parameter from the URL
-        echo "<script>window.location.href = 'admin-photocards-page.php';</script>";
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,7 +37,7 @@ if (isset($_GET['update'])) {
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>
-    </header><br>
+    </header><br><br>
 
     <?php include('../menus-sidebar.php'); ?>
 
@@ -81,7 +73,6 @@ if (isset($_GET['update'])) {
                     <th>PC Title</th>
                     <th>Status</th>
                     <th>Updated At</th>
-                    <th>Created At</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -92,7 +83,7 @@ if (isset($_GET['update'])) {
                 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 
                 // If there is no search term, it will just show all users.
-                $query = "SELECT * FROM photocard_library";
+                $query = "SELECT * FROM photocard_library ORDER BY updated_at DESC";
 
                 if (!empty($searchTerm)) {
                     $query .= " WHERE pc_title LIKE '%$searchTerm%' 
@@ -123,7 +114,6 @@ if (isset($_GET['update'])) {
                             <td>{$row['pc_title']}</td>
                             <td>{$row['pc_status']}</td>
                             <td>{$row['updated_at']}</td>
-                            <td>{$row['created_at']}</td>
                             <td>
                                 <!-- View Button -->
                                 <button class='btn btn-sm btn-primary view-pc-btn' 
@@ -136,7 +126,6 @@ if (isset($_GET['update'])) {
                                     data-pc_title='{$row['pc_title']}'
                                     data-pc_status ='{$row['pc_status']}'
                                     data-created_at='{$row['created_at']}'
-                                    data-updated_at='{$row['updated_at']}'
                                     title='View Photocards'>
                                     <i class='fa-solid fa-expand'></i>
                                 </button>
@@ -183,7 +172,6 @@ if (isset($_GET['update'])) {
                         <p><strong>PC Title:</strong> <span id="modal-pc_title"></span></p>
                         <p><strong>PC Status:</strong> <span id="modal-pc_status"></span></p>
                         <p><strong>Created At:</strong> <span id="modal-created_at"></span></p>
-                        <p><strong>Updated At:</strong> <span id="modal-updated_at"></span></p>
                     </div>
                 </div>
             </div>
@@ -225,35 +213,21 @@ if (isset($_GET['update'])) {
                             <!-- Member's Name Select -->
                             <div class="mb-3">
                                 <label for="edit-member_name" class="form-label"><strong>Member's Name</strong></label>
-                                <select class="form-select" id="edit-member_name" name="member_name"
-                                    onchange="toggleOtherInput()" required>
+                                <select class="form-select" id="edit-member_name" name="member_name" onchange="toggleOtherInput()" required>
                                     <option value="" disabled selected>Choose NCT member...</option>
-                                    <option value="Taeyong">Taeyong</option>
-                                    <option value="Johnny">Johnny</option>
-                                    <option value="Yuta">Yuta</option>
-                                    <option value="Doyoung">Doyoung</option>
-                                    <option value="Jungwoo">Jungwoo</option>
-                                    <option value="Jaehyun">Jaehyun</option>
-                                    <option value="Winwin">Winwin</option>
-                                    <option value="Mark Lee">Mark Lee</option>
-                                    <option value="Haechan">Haechan</option>
-                                    <option value="Jeno">Jeno</option>
-                                    <option value="Jaemin">Jaemin</option>
-                                    <option value="Jisung">Jisung</option>
-                                    <option value="Renjun">Renjun</option>
-                                    <option value="Chenle">Chenle</option>
-                                    <option value="Kun">Kun</option>
-                                    <option value="Yangyang">Yangyang</option>
-                                    <option value="Hendery">Hendery</option>
-                                    <option value="Ten">Ten</option>
-                                    <option value="Xiaojun">Xiaojun</option>
-                                    <option value="Sakuya">Sakuya</option>
-                                    <option value="Riku">Riku</option>
-                                    <option value="Sion">Sion</option>
-                                    <option value="Ryo">Ryo</option>
-                                    <option value="Yushi">Yushi</option>
-                                    <option value="Jaehee">Jaehee</option>
+                                    <?php
+                                    if ($membersResult && mysqli_num_rows($membersResult) > 0) {
+                                        while ($member = mysqli_fetch_assoc($membersResult)) {
+                                            // Use htmlspecialchars to avoid XSS issues
+                                            $name = htmlspecialchars($member['member_name']);
+                                            echo "<option value=\"$name\">$name</option>";
+                                        }
+                                    } else {
+                                        echo "<option disabled>No NCT members found</option>";
+                                    }
+                                    ?>
                                 </select>
+
                             </div>
 
                             <!-- PC Type -->
@@ -271,14 +245,12 @@ if (isset($_GET['update'])) {
                                 </select>
                             </div>
 
-
                             <!-- PC Type -->
                             <div class="mb-3">
                                 <label for="edit-pc_type" class="form-label"><strong>PC Type</strong></label>
                                 <select class="form-select" id="edit-pc_type" name="pc_type"
                                     placeholder="Choose PC type" required>
                                     <option value="" disabled selected>Choose PC type...</option>
-                                    <!-- Add your options here -->
                                     <option value="1">Common</option>
                                     <option value="2">Rare</option>
                                     <option value="3">Exclusive</option>
@@ -300,7 +272,6 @@ if (isset($_GET['update'])) {
                                 </select>
                             </div>
 
-
                             <!-- Modal Footer -->
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-success">Save Changes</button>
@@ -316,8 +287,24 @@ if (isset($_GET['update'])) {
     </div>
     </div>
 
-    <!-- Bootstrap JS (with Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <?php
+    if (isset($_SESSION['swal'])) {
+        $swal = $_SESSION['swal'];
+        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
+        echo "<script>
+            Swal.fire({
+                icon: '{$swal['type']}',
+                title: '{$swal['title']}',
+                text: '{$swal['text']}'
+            });
+        </script>";
+        unset($_SESSION['swal']);
+    }
+    ?> 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script><script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -346,7 +333,6 @@ if (isset($_GET['update'])) {
                     const pcTitle = this.getAttribute('data-pc_title');
                     const pcStatus = this.getAttribute('data-pc_status');
                     const createdAt = this.getAttribute('data-created_at');
-                    const updatedAt = this.getAttribute('data-updated_at');
 
                     // Populate input fields
                     document.getElementById('edit-pc_id').value = pcId;
@@ -406,6 +392,41 @@ if (isset($_GET['update'])) {
             });
         });
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+
+        if (status === 'success') {
+            Swal.fire({
+                icon: 'success',
+                title: '✅ Photocard updated!',
+                text: 'Everything went smoothly 🎉',
+                showConfirmButton: false,
+                timer: 1800
+            });
+        } else if (status === 'error') {
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Update failed!',
+                text: 'Something went wrong. Please try again 😔'
+            });
+        } else if (status === 'invalid_image') {
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Invalid Image',
+                text: 'Please upload a valid image (jpg, jpeg, png, webp, < 5MB) 📷'
+            });
+        } else if (status === 'upload_fail') {
+            Swal.fire({
+                icon: 'error',
+                title: '🚫 Upload Failed',
+                text: 'There was an error uploading the image 😓'
+            });
+        }
+
+        // Clean the URL without reloading
+        if (status) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
 
     </script>
     <style>

@@ -1,10 +1,22 @@
 <?php
-include("../../include/auth.php"); // Include the authentication file
+include("../../include/auth.php"); 
 
-// Check if the user is an admin
 check_role('admin');
 
+include("../../database/dbconn.php");
+
+// Fetch NCT members from the database
+$members = [];
+$query = "SELECT member_name FROM member WHERE member_type = 'NCT'";
+$result = mysqli_query($conn, $query);
+
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $members[] = $row['member_name'];
+    }
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -59,32 +71,11 @@ check_role('admin');
                     <div class="col-sm-10">
                         <select class="form-select" id="inputGroupSelect01" name="member_name">
                             <option value="" disabled selected>Choose NCT member...</option>
-                            <option value="Taeyong">Taeyong</option>
-                            <option value="Johnny">Johnny</option>
-                            <option value="Yuta">Yuta</option>
-                            <option value="Doyoung">Doyoung</option>
-                            <option value="Jungwoo">Jungwoo</option>
-                            <option value="Jaehyun">Jaehyun</option>
-                            <option value="Winwin">Winwin</option>
-                            <option value="Mark Lee">Mark Lee</option>
-                            <option value="Haechan">Haechan</option>
-                            <option value="Jeno">Jeno</option>
-                            <option value="Jaemin">Jaemin</option>
-                            <option value="Jisung">Jisung</option>
-                            <option value="Renjun">Renjun</option>
-                            <option value="Chenle">Chenle</option>
-                            <option value="Kun">Kun</option>
-                            <option value="Yangyang">Yangyang</option>
-                            <option value="Hendery">Hendery</option>
-                            <option value="Ten">Ten</option>
-                            <option value="Xiaojun">Xiaojun</option>
-                            <option value="Sakuya">Sakuya</option>
-                            <option value="Riku">Riku</option>
-                            <option value="Sion">Sion</option>
-                            <option value="Ryo">Ryo</option>
-                            <option value="Yushi">Yushi</option>
-                            <option value="Jaehee">Jaehee</option>
+                            <?php foreach ($members as $name): ?>
+                                <option value="<?php echo htmlspecialchars($name); ?>"><?php echo htmlspecialchars($name); ?></option>
+                            <?php endforeach; ?>
                         </select>
+
                     </div>
                 </div>
 
@@ -154,12 +145,11 @@ check_role('admin');
     </div>
 
 
-    <!-- Bootstrap JS (with Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Custom JavaScript for Sidebar Toggle -->
+
     <script>
-
 
         document.addEventListener('DOMContentLoaded', function () {
             const sidebarToggle = document.getElementById('sidebarToggle');

@@ -36,7 +36,7 @@ check_role('admin');
             </a>
 
         </div>
-    </header><br>
+    </header><br><br>
 
     <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>

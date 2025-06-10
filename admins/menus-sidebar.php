@@ -1,8 +1,9 @@
 <?php
-include __DIR__ . '/../database/dbconn.php'; // More reliable path resolution
+include __DIR__ . '/../database/dbconn.php';
 
 $current_page = basename($_SERVER['PHP_SELF']);
 $current_page_without_query = strtok($current_page, '?');
+$static_sidebar = ($current_page === 'admindashboard.php');
 
 // Actual count queries
 $user_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM users"))['total'];
@@ -14,166 +15,77 @@ $todolist_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS tot
 $chatlogs_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM chat_logs"))['total'];
 $report_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM report"))['total'];
 $member_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM member"))['total'];
-
 ?>
 
-
 <!-- menus-sidebar.php -->
-<div class="offcanvas offcanvas-start custom-offcanvas" data-bs-scroll="true" tabindex="-1"
-    id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+<div class="<?php echo $static_sidebar ? 'static-sidebar' : 'offcanvas offcanvas-start custom-offcanvas'; ?>"
+     <?php if (!$static_sidebar): ?>
+         data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel"
+     <?php endif; ?>>
+    
     <div class="offcanvas-header">
         <a href="../maindb/admindashboard.php" class="offcanvas-title" id="offcanvasWithBothOptionsLabel"
-            style="text-decoration: none; color: black;"     title='Admin Main Dashboard'>
-            
+           style="text-decoration: none; color: black;" title="Admin Main Dashboard">
             Menu
         </a>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <?php if (!$static_sidebar): ?>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <?php endif; ?>
     </div>
 
     <div class="offcanvas-body">
         <div class="row row-cols-1 row-cols-md-1 g-3">
-            <!-- Users Card -->
-            <div class="col">
-                <a href="../maindb/admin-users-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-users-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-solid fa-user-astronaut fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $user_count; ?></h6>
-                                <small class="text-muted">Users</small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
 
-            <!-- Pomodoro Card -->
-            <div class="col">
-                <a href="../maindb/admin-pomodoro-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-pomodoro-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-regular fa-clock fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $pomodoro_count; ?></h6>
-                                <small class="text-muted">Pomodoro</small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
+            <!-- Sidebar Items Below -->
+            <?php
+            $sidebar_items = [
+                ['href' => 'admin-users-page.php', 'icon' => 'fa-user-astronaut', 'label' => 'Users', 'count' => $user_count],
+                ['href' => 'admin-pomodoro-page.php', 'icon' => 'fa-clock', 'label' => 'Pomodoro', 'count' => $pomodoro_count],
+                ['href' => 'admin-photocards-page.php', 'icon' => 'fa-id-card', 'label' => 'Photocards', 'count' => $photocards_count],
+                ['href' => 'admin-quotes-page.php', 'icon' => 'fa-envelope', 'label' => 'Quotes', 'count' => $quotes_count],
+                ['href' => 'admin-moods-page.php', 'icon' => 'fa-face-laugh-wink', 'label' => 'Moods', 'count' => $moods_count],
+                ['href' => 'admin-todolist-page.php', 'icon' => 'fa-list-check', 'label' => 'To-Do List', 'count' => $todolist_count],
+                ['href' => 'admin-chatlogs-page.php', 'icon' => 'fa-headset', 'label' => 'Chat Logs', 'count' => $chatlogs_count],
+                ['href' => 'admin-report-page.php', 'icon' => 'fa-folder', 'label' => 'Report', 'count' => $report_count],
+                ['href' => 'admin-member-page.php', 'icon' => 'fa-user-secret', 'label' => 'Member', 'count' => $member_count],
+            ];
 
-            <!-- Photocards Card -->
-            <div class="col">
-                <a href="../maindb/admin-photocards-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-photocards-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-solid fa-id-card fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $photocards_count; ?></h6>
-                                <small class="text-muted">Photocards</small>
+            foreach ($sidebar_items as $item):
+                $is_active = ($current_page_without_query === $item['href']) ? 'active' : '';
+            ?>
+                <div class="col">
+                    <a href="../maindb/<?php echo $item['href']; ?>" class="card-link text-decoration-none <?php echo $is_active; ?>">
+                        <div class="card equal-height">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fa-solid <?php echo $item['icon']; ?> fa-2x me-3"></i>
+                                <div>
+                                    <h6 class="mb-0"><?php echo $item['count']; ?></h6>
+                                    <small class="text-muted"><?php echo $item['label']; ?></small>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Quotes Card -->
-            <div class="col">
-                <a href="../maindb/admin-quotes-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-quotes-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-regular fa-envelope fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $quotes_count; ?></h6>
-                                <small class="text-muted">Quotes</small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Moods Card -->
-            <div class="col">
-                <a href="../maindb/admin-moods-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-moods-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-regular fa-face-laugh-wink fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $moods_count; ?></h6>
-                                <small class="text-muted">Moods</small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- To-Do List Card -->
-            <div class="col">
-                <a href="../maindb/admin-todolist-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-todolist-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-solid fa-list-check fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $todolist_count; ?></h6>
-                                <small class="text-muted">To-Do List</small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Chat Logs Card -->
-            <div class="col">
-                <a href="../maindb/admin-chatlogs-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-chatlogs-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-solid fa-headset fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $chatlogs_count; ?></h6>
-                                <small class="text-muted">Chat Logs</small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Report Card -->
-            <div class="col">
-                <a href="../maindb/admin-report-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-report-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-regular fa-folder fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $report_count; ?></h6>
-                                <small class="text-muted">Report</small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Mmeber Card -->
-            <div class="col">
-                <a href="../maindb/admin-member-page.php" class="card-link text-decoration-none <?php echo ($current_page_without_query == 'admin-member-page.php') ? 'active' : ''; ?>">
-                    <div class="card equal-height">
-                        <div class="card-body d-flex align-items-center">
-                            <i class="fa-solid fa-user-secret fa-2x me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?php echo $member_count; ?></h6>
-                                <small class="text-muted">Member</small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
+                    </a>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>
 
-<!-- Optional: Add CSS for active state -->
+<!-- Styles -->
 <style>
     .active {
-        background-color: #007bff; /* Blue background for active item */
+        background-color: #007bff;
         color: white;
+    }
+
+    .static-sidebar {
+        width: 300px;
+        position: fixed;
+        height: 100vh;
+        background: #f8f9fa;
+        padding: 1rem;
+        overflow-y: auto;
+        z-index: 1030; /* same as Bootstrap's offcanvas */
+        border-right: 1px solid #dee2e6;
     }
 </style>

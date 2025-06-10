@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pomodoro Timer</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    #time { font-size: 48px; margin: 20px 0; }
+    button { padding: 10px 20px; margin: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Pomodoro Timer</h1>
+  <div id="time">25:00</div>
+  <button onclick="startTimer()">Start</button>
+  <button onclick="resetTimer()">Reset</button>
+
+  <script>
+    const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
+    let timerInterval;
+
+    function startTimer() {
+      // If no start time exists in localStorage, set it
+      if (!localStorage.getItem('startTime')) {
+        const now = Date.now();
+        localStorage.setItem('startTime', now);
+      }
+      tick();
+      timerInterval = setInterval(tick, 1000);
+    }
+
+    function tick() {
+      const startTime = parseInt(localStorage.getItem('startTime'));
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const remaining = POMODORO_DURATION - elapsed;
+
+      if (remaining <= 0) {
+        clearInterval(timerInterval);
+        document.getElementById('time').textContent = "00:00";
+        alert("Pomodoro Complete!");
+        return;
+      }
+
+      const minutes = Math.floor(remaining / 60).toString().padStart(2, '0');
+      const seconds = (remaining % 60).toString().padStart(2, '0');
+      document.getElementById('time').textContent = `${minutes}:${seconds}`;
+    }
+
+    function resetTimer() {
+      localStorage.removeItem('startTime');
+      clearInterval(timerInterval);
+      document.getElementById('time').textContent = "25:00";
+    }
+
+    // Auto-start if timer already in progress
+    if (localStorage.getItem('startTime')) {
+      startTimer();
+    }
+  </script>
+
+</body>
+</html>

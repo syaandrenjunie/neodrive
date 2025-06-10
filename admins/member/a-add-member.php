@@ -27,10 +27,10 @@ check_role('admin');
     <header class="header-container">
         <div class="logo-title-container">
             <!-- Image will trigger the sidebar -->
-            <img src="../../assets/image/timer2.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
+            <img src="../../assets/image/clock.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"> <a
                 class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
-                href="#">Add New Member</a>
+                href="../maindb/admin-member-page.php">Add New Member</a>
         </div>
         <div class="header-buttons">
 
@@ -85,62 +85,36 @@ check_role('admin');
                     </div>
                 </fieldset>
 
-                <!-- Member Name Dropdown -->
-<div class="row mb-3" id="nctMemberRow" style="display: none;">
-  <label for="inputType3" class="col-sm-2 col-form-label">Member's Name</label>
-  <div class="col-sm-10">
-      <select class="form-select" id="nctMemberSelect" name="member_name" onchange="toggleOtherInput()">
-          <option selected>Choose NCT member...</option>
-                            <option value="Taeyong">Taeyong</option>
-                            <option value="Johnny">Johnny</option>
-                            <option value="Yuta">Yuta</option>
-                            <option value="Doyoung">Doyoung</option>
-                            <option value="Jungwoo">Jungwoo</option>
-                            <option value="Jaehyun">Jaehyun</option>
-                            <option value="Winwin">Winwin</option>
-                            <option value="Mark Lee">Mark Lee</option>
-                            <option value="Haechan">Haechan</option>
-                            <option value="Jeno">Jeno</option>
-                            <option value="Jaemin">Jaemin</option>
-                            <option value="Jisung">Jisung</option>
-                            <option value="Renjun">Renjun</option>
-                            <option value="chenle">Chenle</option>
-                            <option value="Kun">Kun</option>
-                            <option value="Yangyang">Yangyang</option>
-                            <option value="Hendery">Hendery</option>
-                            <option value="Ten">Ten</option>
-                            <option value="Xiaojun">Xiaojun</option>
-                            <option value="Sakuya">Sakuya</option>
-                            <option value="Riku">Riku</option>
-                            <option value="Sion">Sion</option>
-                            <option value="Ryo">Ryo</option>
-                            <option value="Yushi">Yushi</option>
-                            <option value="Jaehee">Jaehee</option>
+                <!-- Member Name Text Input -->
+                <div class="row mb-3" id="nctMemberRow" style="display: none;">
+                <label for="memberNameInput" class="col-sm-2 col-form-label">Member's Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="memberNameInput" name="member_name" placeholder="Enter NCT member's name">
+                </div>
+                </div>
+
+                <!-- Other Member Input (hidden by default) -->
+                <div class="row mb-3" id="otherFigureRow" style="display: none;">
+                    <label for="otherFigureInput" class="col-sm-2 col-form-label">Figure's Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="otherFigureInput" name="other_member_name" placeholder="Enter figure's name">
+                    </div>
+                </div>
+
+                <!-- Subunit Dropdown -->
+                <div class="row mb-3" id="subunitRow" style="display: none;">
+                    <label for="inputUnit3" class="col-sm-2 col-form-label">Subunit</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="inputGroupSelect01" name="subunit">
+                            <option value="" disabled selected>Choose subunit..</option>
+                            <option value="NCT">NCT</option>
+                            <option value="NCT 127">NCT 127</option>
+                            <option value="NCT Dream">NCT Dream</option>
+                            <option value="NCT Wish">NCT Wish</option>
+                            <option value="WayV">WayV</option>
                         </select>
                     </div>
                 </div>
-                <!-- Other Member Input (hidden by default) -->
-<div class="row mb-3" id="otherFigureRow" style="display: none;">
-    <label for="otherFigureInput" class="col-sm-2 col-form-label">Figure's Name</label>
-    <div class="col-sm-10">
-        <input type="text" class="form-control" id="otherFigureInput" name="other_member_name" placeholder="Enter figure's name">
-    </div>
-</div>
-
-                <!-- Subunit Dropdown -->
-<div class="row mb-3" id="subunitRow" style="display: none;">
-    <label for="inputUnit3" class="col-sm-2 col-form-label">Subunit</label>
-    <div class="col-sm-10">
-        <select class="form-select" id="inputGroupSelect01" name="subunit">
-            <option value="" disabled selected>Choose subunit..</option>
-            <option value="NCT">NCT</option>
-            <option value="NCT127">NCT 127</option>
-            <option value="NCTDREAM">NCT Dream</option>
-            <option value="NCTWISH">NCT Wish</option>
-            <option value="WAYV">WayV</option>
-        </select>
-    </div>
-</div>
 
 
                 <!-- Submit Button -->
@@ -170,32 +144,39 @@ check_role('admin');
     });
 
     function toggleMemberAndSubunit() {
-        const memberType = document.querySelector('input[name="member_type"]:checked').value;
-        const nctMemberRow = document.getElementById('nctMemberRow');
-        const subunitRow = document.getElementById('subunitRow');
-        const otherFigureRow = document.getElementById('otherFigureRow');
+    const memberType = document.querySelector('input[name="member_type"]:checked').value;
+    const nctMemberRow = document.getElementById('nctMemberRow');
+    const subunitRow = document.getElementById('subunitRow');
+    const otherFigureRow = document.getElementById('otherFigureRow');
+    const subunitSelect = document.getElementById('inputGroupSelect01');
 
-        if (memberType === "NCT") {
-            nctMemberRow.style.display = "flex";
-            subunitRow.style.display = "flex";
-            toggleOtherInput(); // Check if "Other" is selected in the dropdown
-        } else {
-            nctMemberRow.style.display = "none";
-            subunitRow.style.display = "none";
-            otherFigureRow.style.display = "flex";
-        }
+    if (memberType === "NCT") {
+        // Show NCT name + subunit, hide Figure's Name
+        nctMemberRow.style.display = "flex";
+        subunitRow.style.display = "flex";
+        otherFigureRow.style.display = "none";
+        subunitSelect.disabled = false;
+    } else {
+        // Show Figure's Name, hide NCT fields
+        nctMemberRow.style.display = "none";
+        subunitRow.style.display = "none";
+        otherFigureRow.style.display = "flex";
+        subunitSelect.disabled = true;
     }
+}
 
-    function toggleOtherInput() {
-        const selectedMember = document.getElementById('nctMemberSelect').value;
-        const otherFigureRow = document.getElementById('otherFigureRow');
 
-        if (selectedMember === "Other") {
-            otherFigureRow.style.display = "flex";
-        } else {
-            otherFigureRow.style.display = "none";
-        }
+document.querySelector('form').addEventListener('submit', function(e) {
+    const memberType = document.querySelector('input[name="member_type"]:checked').value;
+    const subunitSelect = document.getElementById('inputGroupSelect01');
+
+    if (memberType === "Other") {
+        // Clear subunit value so nothing is sent
+        subunitSelect.value = "";
     }
+});
+
+
     </script>
     <style>
         .container {

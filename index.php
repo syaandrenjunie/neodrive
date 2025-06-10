@@ -22,7 +22,6 @@
             </h2><br>
 <button type="button" class="custom-btn" onclick="window.location.href='login.php'">Let's Start Now</button>
         </div>
-        <img src="assets/image/index1.png" class="rounded ms-3 img-fluid custom-img" alt="Icon">
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -36,7 +35,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("assets/image/space.jpg");
+    background-image: url("assets/image/time.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -67,7 +66,7 @@
             --bs-btn-padding-y: 0.5rem;
             --bs-btn-padding-x: 1rem;
             --bs-btn-font-size: 1rem;
-            background: linear-gradient(to right,rgb(85, 223, 73),rgb(28, 206, 67));
+            background: linear-gradient(to right,rgb(53, 133, 46),rgb(83, 153, 36));
             border: none;
             color: white;
             font-weight: bold;

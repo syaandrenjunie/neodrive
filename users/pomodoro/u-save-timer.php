@@ -30,13 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("iiiis", $user_id, $total_rounds, $round_duration, $break_duration, $started_at);
 
     if ($stmt->execute()) {
-        // On success, redirect with session_id
-        header("Location: timer.php?add_success=1&session_id=" . $stmt->insert_id);
-        exit;
-    } else {
-        // Execution failed
-        header("Location: timer.php?add_success=0");
-        exit;
-    }
+    // Get insert_id from the connection, not the statement
+    $session_id = $conn->insert_id;
+
+    // Redirect to timer page with session_id
+    header("Location: timer.php?add_success=1&session_id=$session_id");
+    exit;
+} else {
+    header("Location: timer.php?add_success=0");
+    exit;
+}
+
 }
 ?>

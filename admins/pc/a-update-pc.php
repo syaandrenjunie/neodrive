@@ -66,10 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssssi", $member_name, $subunit, $pc_type, $pc_title, $pc_status, $dbFilePath, $id);
 
-    if ($stmt->execute()) {
-        echo "<script>alert('Photocard successfully updated!'); window.location.href='../maindb/admin-photocards-page.php';</script>";
+     if ($stmt->execute()) {
+        header("Location: ../maindb/admin-photocards-page.php?status=success");
     } else {
-        echo "<script>alert('Error updating data: " . addslashes($stmt->error) . "'); window.history.back();</script>";
+        header("Location: ../maindb/admin-photocards-page.php?status=error");
     }
 
     $stmt->close();

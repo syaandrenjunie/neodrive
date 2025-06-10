@@ -29,13 +29,12 @@ include '../../database/dbconn.php';
             <a class="link-underline link-underline-opacity-0" href="#">Users Management Dashboard</a>
         </div>
         <div class="header-buttons">
-            <a class="link-underline link-underline-opacity-0" href="#">Lists</a>
-            <a class="link-underline link-underline-opacity-0" href="../users/a-add-user.php">New</a>
+            
             <a href="adminprofile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>
-    </header><br>
+    </header><br><br>
 
     <?php include('../menus-sidebar.php'); ?>
 
