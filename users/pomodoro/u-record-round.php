@@ -18,13 +18,13 @@ if ($round === 0 || $session_id === 0) {
     exit;
 }
 
-// Check the total_rounds for the session
-$check = $conn->prepare("SELECT total_rounds FROM timer_sessions WHERE session_id = ? AND user_id = ?");
-$check->bind_param("ii", $session_id, $user_id);
-$check->execute();
-$result = $check->get_result();
+// Get total_rounds and current completed_rounds
+$query = $conn->prepare("SELECT total_rounds, completed_rounds FROM timer_sessions WHERE session_id = ? AND user_id = ?");
+$query->bind_param("ii", $session_id, $user_id);
+$query->execute();
+$result = $query->get_result();
 $row = $result->fetch_assoc();
-$check->close();
+$query->close();
 
 if (!$row) {
     http_response_code(404);
@@ -32,30 +32,40 @@ if (!$row) {
     exit;
 }
 
-if ($round >= (int)$row['total_rounds']) {
-    // All rounds completed - update status and ended_at
-    $stmt = $conn->prepare("
-        UPDATE timer_sessions 
-        SET completed_rounds = ?, status = 'completed', ended_at = NOW() 
-        WHERE session_id = ? AND user_id = ?
-    ");
+$total_rounds = (int)$row['total_rounds'];
+$current_completed = (int)$row['completed_rounds'];
+
+// Only update if this is a new work round (greater than current completed_rounds)
+if ($round > $current_completed) {
+    if ($round >= $total_rounds) {
+        // Final work round completed — mark session completed
+        $stmt = $conn->prepare("
+            UPDATE timer_sessions 
+            SET completed_rounds = ?, status = 'completed', ended_at = NOW() 
+            WHERE session_id = ? AND user_id = ?
+        ");
+    } else {
+        // Ongoing session — update completed_rounds only
+        $stmt = $conn->prepare("
+            UPDATE timer_sessions 
+            SET completed_rounds = ? 
+            WHERE session_id = ? AND user_id = ?
+        ");
+    }
+
+    $stmt->bind_param("iii", $round, $session_id, $user_id);
+
+    if ($stmt->execute()) {
+        echo "Work round recorded successfully.";
+    } else {
+        echo "Error updating session: " . $stmt->error;
+    }
+
+    $stmt->close();
 } else {
-    // Still in progress
-    $stmt = $conn->prepare("
-        UPDATE timer_sessions 
-        SET completed_rounds = ? 
-        WHERE session_id = ? AND user_id = ?
-    ");
+    // No new round — don't update
+    echo "No update needed. Current round already recorded.";
 }
 
-$stmt->bind_param("iii", $round, $session_id, $user_id);
-
-if ($stmt->execute()) {
-    echo "Session updated successfully.";
-} else {
-    echo "Error updating session: " . $stmt->error;
-}
-
-$stmt->close();
 $conn->close();
 ?>

@@ -25,6 +25,7 @@ $user_id = $_SESSION['user_id'];
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
+
 <body>
 
     <header class="header-container">
@@ -184,271 +185,281 @@ $user_id = $_SESSION['user_id'];
             <?php } ?>
 
             <script>
-    const sessionId = <?= isset($_GET['session_id']) ? (int) $_GET['session_id'] : 'null' ?>;
+                const sessionId = <?= isset($_GET['session_id']) ? (int) $_GET['session_id'] : 'null' ?>;
 
-    document.addEventListener("DOMContentLoaded", function () {
+                document.addEventListener("DOMContentLoaded", function () {
 
-        let totalRounds = 1;
-        let currentRound = 1;
-        let roundTime = 25 * 60; // default 25 min in seconds
-        let breakTime = 5 * 60;  // default 5 min in seconds
-        let timeLeft = 0;
-        let timerInterval = null;
-        let isRound = true; // true means round, false means break
-        let isPaused = false;
-        let timerStartTimestamp = null; // NEW: For persistence
+                    let totalRounds = 1;
+                    let currentRound = 1;
+                    let roundTime = 25 * 60; // default 25 min in seconds
+                    let breakTime = 5 * 60;  // default 5 min in seconds
+                    let timeLeft = 0;
+                    let timerInterval = null;
+                    let isRound = true; // true means round, false means break
+                    let isPaused = false;
+                    let timerStartTimestamp = null; // NEW: For persistence
 
-        // Elements
-        const timerEl = document.getElementById('timer');
-        const roundInfoEl = document.getElementById('roundInfo');
-        const startRoundBtn = document.getElementById('startRoundBtn');
-        const startBreakBtn = document.getElementById('startBreakBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const timerButtons = document.getElementById('timerButtons');
+                    // Elements
+                    const timerEl = document.getElementById('timer');
+                    const roundInfoEl = document.getElementById('roundInfo');
+                    const startRoundBtn = document.getElementById('startRoundBtn');
+                    const startBreakBtn = document.getElementById('startBreakBtn');
+                    const pauseBtn = document.getElementById('pauseBtn');
+                    const resetBtn = document.getElementById('resetBtn');
+                    const timerButtons = document.getElementById('timerButtons');
 
-        // ----------- Persistence Functions -----------
-        function saveTimerState() {
-            localStorage.setItem('timerState', JSON.stringify({
-                totalRounds,
-                currentRound,
-                roundTime,
-                breakTime,
-                timeLeft,
-                isRound,
-                isPaused,
-                timerStartTimestamp
-            }));
-        }
-
-        function restoreTimerState() {
-    const stateStr = localStorage.getItem('timerState');
-    if (!stateStr) return;
-
-    const state = JSON.parse(stateStr);
-    totalRounds = state.totalRounds;
-    currentRound = state.currentRound;
-    roundTime = state.roundTime;
-    breakTime = state.breakTime;
-    isRound = state.isRound;
-    isPaused = state.isPaused;
-    timerStartTimestamp = state.timerStartTimestamp;
-
-    if (!timerStartTimestamp) return; // no valid timer started
-
-    // Calculate timeLeft based on elapsed time
-    if (!isPaused) {
-        const elapsed = Math.floor((Date.now() - timerStartTimestamp) / 1000);
-        timeLeft = Math.max(0, state.timeLeft - elapsed);
-    } else {
-        timeLeft = state.timeLeft;
-    }
-
-    updateTimerDisplay();
-
-    // Update UI buttons accordingly
-    startRoundBtn.disabled = !isRound || timeLeft > 0;
-    startBreakBtn.disabled = isRound || timeLeft > 0;
-    pauseBtn.disabled = (timeLeft === 0);
-    pauseBtn.textContent = isPaused ? "Resume" : "Pause";
-
-    roundInfoEl.textContent = isRound
-        ? `⏳ Round ${currentRound} of ${totalRounds}`
-        : `🛋️ Break after Round ${currentRound}`;
-
-    // **Start the timer interval if timer is running and time left**
-    if (timeLeft > 0 && !isPaused) {
-        clearInterval(timerInterval);
-        timerInterval = setInterval(timerTick, 1000);
-    }
-}
-
-        // Format seconds to mm:ss
-        function formatTime(seconds) {
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        // Record completed round via AJAX
-        function recordCompletedRound(roundNumber) {
-            fetch('u-record-round.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'round=' + encodeURIComponent(roundNumber) + '&session_id=' + encodeURIComponent(sessionId)
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log('Server response:', data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        // Update Timer display
-        function updateTimerDisplay() {
-            timerEl.textContent = formatTime(timeLeft);
-        }
-
-        function timerTick() {
-            if (!isPaused && timeLeft > 0) {
-                timeLeft--;
-                updateTimerDisplay();
-                saveTimerState();
-            }
-
-            if (timeLeft === 0) {
-                clearInterval(timerInterval);
-                saveTimerState();
-
-                if (isRound) {
-                    playSound();
-                    recordCompletedRound(currentRound);
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: `🎉 Round ${currentRound} complete!`,
-                        showConfirmButton: true,
-                        confirmButtonText: 'OK',
-                        timer: 3000
-                    });
-
-                    startRoundBtn.disabled = true;
-                    startBreakBtn.disabled = false;
-                    pauseBtn.disabled = true;
-                    isRound = false;
-
-                } else {
-                    Swal.fire({
-                        icon: 'info',
-                        title: `⏱️ Break complete!`,
-                        text: currentRound < totalRounds ? `Get ready for Round ${currentRound + 1}` : `All rounds complete! 🎯`,
-                        showConfirmButton: true,
-                        timer: 3000
-                    });
-
-                    if (currentRound >= totalRounds) {
-                        playSound();
-                        resetTimer();
-                        return;
+                    // ----------- Persistence Functions -----------
+                    function saveTimerState() {
+                        localStorage.setItem('timerState', JSON.stringify({
+                            totalRounds,
+                            currentRound,
+                            roundTime,
+                            breakTime,
+                            timeLeft,
+                            isRound,
+                            isPaused,
+                            timerStartTimestamp
+                        }));
                     }
 
-                    currentRound++;
-                    startRoundBtn.disabled = false;
-                    startBreakBtn.disabled = true;
-                    pauseBtn.disabled = true;
-                    isRound = true;
-                }
-                saveTimerState();
-            }
-        }
+                    function restoreTimerState() {
+                        const stateStr = localStorage.getItem('timerState');
+                        if (!stateStr) return;
 
-        function startRound() {
-            timeLeft = roundTime;
-            timerStartTimestamp = Date.now();
-            updateTimerDisplay();
-            clearInterval(timerInterval);
-            timerInterval = setInterval(timerTick, 1000);
-            startRoundBtn.disabled = true;
-            startBreakBtn.disabled = true;
-            pauseBtn.disabled = false;
-            roundInfoEl.textContent = `⏳ Round ${currentRound} of ${totalRounds}`;
-            isRound = true;
-            isPaused = false;
-            pauseBtn.textContent = "Pause";
-            saveTimerState();
-        }
+                        const state = JSON.parse(stateStr);
+                        totalRounds = state.totalRounds;
+                        currentRound = state.currentRound;
+                        roundTime = state.roundTime;
+                        breakTime = state.breakTime;
+                        isRound = state.isRound;
+                        isPaused = state.isPaused;
+                        timerStartTimestamp = state.timerStartTimestamp;
 
-        function startBreak() {
-            timeLeft = breakTime;
-            timerStartTimestamp = Date.now();
-            updateTimerDisplay();
-            clearInterval(timerInterval);
-            timerInterval = setInterval(timerTick, 1000);
-            startRoundBtn.disabled = true;
-            startBreakBtn.disabled = true;
-            pauseBtn.disabled = false;
-            roundInfoEl.textContent = `🛋️ Break after Round ${currentRound}`;
-            isRound = false;
-            isPaused = false;
-            pauseBtn.textContent = "Pause";
-            saveTimerState();
-        }
+                        if (!timerStartTimestamp) return; // no valid timer started
 
-        // Pause/Resume Timer
-        function pauseTimer() {
-            if (isPaused) {
-                isPaused = false;
-                timerStartTimestamp = Date.now() - ((roundTime + breakTime - timeLeft) * 1000);
-                pauseBtn.textContent = "Pause";
-                timerInterval = setInterval(timerTick, 1000);
-            } else {
-                isPaused = true;
-                clearInterval(timerInterval);
-                pauseBtn.textContent = "Resume";
-            }
-            saveTimerState();
-        }
+                        // Calculate timeLeft based on elapsed time
+                        if (!isPaused) {
+                            const elapsed = Math.floor((Date.now() - timerStartTimestamp) / 1000);
+                            timeLeft = Math.max(0, state.timeLeft - elapsed);
+                        } else {
+                            timeLeft = state.timeLeft;
+                        }
 
-        // Reset Timer
-        function resetTimer() {
-            clearInterval(timerInterval);
-            currentRound = 1;
-            timeLeft = 0;
-            timerStartTimestamp = null;
-            updateTimerDisplay();
-            roundInfoEl.textContent = `Timer reset. Set your rounds and times.`;
-            startRoundBtn.disabled = false;
-            startBreakBtn.disabled = true;
-            pauseBtn.disabled = true;
-            pauseBtn.textContent = "Pause";
-            isPaused = false;
-            isRound = true;
-            localStorage.removeItem('timerState');
-        }
+                        updateTimerDisplay();
 
-        function playSound() {
-            const sound = document.getElementById('alarmSound');
-            sound.currentTime = 0;
-            sound.play();
-        }
+                        // Update UI buttons accordingly
+                        startRoundBtn.disabled = !isRound || timeLeft > 0;
+                        startBreakBtn.disabled = isRound || timeLeft > 0;
+                        pauseBtn.disabled = (timeLeft === 0);
+                        pauseBtn.textContent = isPaused ? "Resume" : "Pause";
 
-        // Event listeners
-        startRoundBtn.addEventListener('click', startRound);
-        startBreakBtn.addEventListener('click', startBreak);
-        pauseBtn.addEventListener('click', pauseTimer);
-        resetBtn.addEventListener('click', resetTimer);
+                        roundInfoEl.textContent = isRound
+                            ? `⏳ Round ${currentRound} of ${totalRounds}`
+                            : `🛋️ Break after Round ${currentRound}`;
 
-        // Restore timer state on page load
-        restoreTimerState();
+                        // **Start the timer interval if timer is running and time left**
+                        if (timeLeft > 0 && !isPaused) {
+                            clearInterval(timerInterval);
+                            timerInterval = setInterval(timerTick, 1000);
+                        }
+                    }
 
-        // Save timer state before leaving page
-        window.addEventListener('beforeunload', saveTimerState);
+                    // Format seconds to mm:ss
+                    function formatTime(seconds) {
+                        const m = Math.floor(seconds / 60);
+                        const s = seconds % 60;
+                        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                    }
 
-        // Show timer buttons only after user sets timer successfully
-        <?php if (isset($_GET['add_success']) && $_GET['add_success'] == 1): ?>
-            timerButtons.style.display = 'block';
-            // Set initial values from PHP variables
-            totalRounds = <?= (int) $totalRounds ?>;
-            roundTime = <?= (int) $roundDuration ?>;
-            breakTime = <?= (int) $breakDuration ?>;
-            currentRound = 1;
-            timeLeft = 0;
-            updateTimerDisplay();
-            roundInfoEl.textContent = `Set for ${totalRounds} rounds, ${roundTime / 60} min per round, ${breakTime / 60} min break.`;
-            startRoundBtn.disabled = false;
-            startBreakBtn.disabled = true;
-            pauseBtn.disabled = true;
-        <?php else: ?>
-            timerButtons.style.display = 'none';
-        <?php endif; ?>
-    });
-</script>
+                    // Record completed round via AJAX
+                    function recordCompletedRound(roundNumber) {
+                        fetch('u-record-round.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'round=' + encodeURIComponent(roundNumber) + '&session_id=' + encodeURIComponent(sessionId)
+                        })
+                            .then(response => response.text())
+                            .then(data => {
+                                console.log('Server response:', data);
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                    }
 
-            <audio id="alarmSound" src="path/to/alert.mp3" preload="auto"></audio>
+                    // Update Timer display
+                    function updateTimerDisplay() {
+                        timerEl.textContent = formatTime(timeLeft);
+                    }
+
+                    function timerTick() {
+                        if (!isPaused && timeLeft > 0) {
+                            timeLeft--;
+                            updateTimerDisplay();
+                            saveTimerState();
+                        }
+
+                        if (timeLeft === 0) {
+                            clearInterval(timerInterval);
+                            saveTimerState();
+
+                        if (isRound) {
+                                playSound();
+                                recordCompletedRound(currentRound);
+
+                        // If it's the last round, show final completion alert and reset
+                        if (currentRound >= totalRounds) {
+                        playSound();
+                        Swal.fire({
+                            icon: 'success',
+                            title: '🎯 All rounds complete!',
+                            text: 'Well done! You finished your Pomodoro session.',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Awesome!'
+                        });
+                        resetTimer();
+                        return;
+                        }
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: `🎉 Round ${currentRound} complete!`,
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'OK',
+                                    timer: 6000
+                                });
+
+                                // Enable break button for the next round
+                                startRoundBtn.disabled = true;
+                                startBreakBtn.disabled = false;
+                                pauseBtn.disabled = true;
+                                isRound = false;
+
+                            } else {
+                                    playSound(); // 🔔 Alert sound after break ends
+                                    Swal.fire({
+                                        icon: 'info',
+                                        title: `⏱️ Break complete!`,
+                                        text: `Get ready for Round ${currentRound + 1}`,
+                                        showConfirmButton: true,
+                                        timer: 6000
+                                    });
+
+                                    currentRound++;
+                                    startRoundBtn.disabled = false;
+                                    startBreakBtn.disabled = true;
+                                    pauseBtn.disabled = true;
+                                    isRound = true;
+                                }
+
+                            saveTimerState();
+                        }
+                    }
+
+                    function startRound() {
+                        timeLeft = roundTime;
+                        timerStartTimestamp = Date.now();
+                        updateTimerDisplay();
+                        clearInterval(timerInterval);
+                        timerInterval = setInterval(timerTick, 1000);
+                        startRoundBtn.disabled = true;
+                        startBreakBtn.disabled = true;
+                        pauseBtn.disabled = false;
+                        roundInfoEl.textContent = `⏳ Round ${currentRound} of ${totalRounds}`;
+                        isRound = true;
+                        isPaused = false;
+                        pauseBtn.textContent = "Pause";
+                        saveTimerState();
+                    }
+
+                    function startBreak() {
+                        timeLeft = breakTime;
+                        timerStartTimestamp = Date.now();
+                        updateTimerDisplay();
+                        clearInterval(timerInterval);
+                        timerInterval = setInterval(timerTick, 1000);
+                        startRoundBtn.disabled = true;
+                        startBreakBtn.disabled = true;
+                        pauseBtn.disabled = false;
+                        roundInfoEl.textContent = `🛋️ Break after Round ${currentRound}`;
+                        isRound = false;
+                        isPaused = false;
+                        pauseBtn.textContent = "Pause";
+                        saveTimerState();
+                    }
+
+                    // Pause/Resume Timer
+                    function pauseTimer() {
+                        if (isPaused) {
+                            isPaused = false;
+                            timerStartTimestamp = Date.now() - ((roundTime + breakTime - timeLeft) * 1000);
+                            pauseBtn.textContent = "Pause";
+                            timerInterval = setInterval(timerTick, 1000);
+                        } else {
+                            isPaused = true;
+                            clearInterval(timerInterval);
+                            pauseBtn.textContent = "Resume";
+                        }
+                        saveTimerState();
+                    }
+
+                    // Reset Timer
+                    function resetTimer() {
+                        clearInterval(timerInterval);
+                        currentRound = 1;
+                        timeLeft = 0;
+                        timerStartTimestamp = null;
+                        updateTimerDisplay();
+                        roundInfoEl.textContent = `Timer reset. Set your rounds and times.`;
+                        startRoundBtn.disabled = false;
+                        startBreakBtn.disabled = true;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = "Pause";
+                        isPaused = false;
+                        isRound = true;
+                        localStorage.removeItem('timerState');
+                    }
+
+                    function playSound() {
+                        const sound = document.getElementById('alarmSound');
+                        if (sound) {
+                            sound.currentTime = 0;
+                            sound.play().catch(e => console.error("Sound play blocked or failed:", e));
+                        }
+                    }
+                    startRoundBtn.addEventListener('click', startRound);
+                    startBreakBtn.addEventListener('click', startBreak);
+                    pauseBtn.addEventListener('click', pauseTimer);
+                    resetBtn.addEventListener('click', resetTimer);
+
+                    // Restore timer state on page load
+                    restoreTimerState();
+
+                    // Save timer state before leaving page
+                    window.addEventListener('beforeunload', saveTimerState);
+
+                    // Show timer buttons only after user sets timer successfully
+                    <?php if (isset($_GET['add_success']) && $_GET['add_success'] == 1): ?>
+                        timerButtons.style.display = 'block';
+                        // Set initial values from PHP variables
+                        totalRounds = <?= (int) $totalRounds ?>;
+                        roundTime = <?= (int) $roundDuration ?>;
+                        breakTime = <?= (int) $breakDuration ?>;
+                        currentRound = 1;
+                        timeLeft = 0;
+                        updateTimerDisplay();
+                        roundInfoEl.textContent = `Set for ${totalRounds} rounds, ${roundTime / 60} min per round, ${breakTime / 60} min break.`;
+                        startRoundBtn.disabled = false;
+                        startBreakBtn.disabled = true;
+                        pauseBtn.disabled = true;
+                    <?php else: ?>
+                        timerButtons.style.display = 'none';
+                    <?php endif; ?>
+                });
+            </script>
+
+            <audio id="alarmSound" src="../../assets/sounds/jaemin_mwoya.mp3" preload="auto"></audio>
 
         </div>
 
@@ -638,7 +649,7 @@ $user_id = $_SESSION['user_id'];
     </div>
     </div>
 
-    
+
     <!-- Bootstrap JavaScript (Required for Modal) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../script.js"></script>
