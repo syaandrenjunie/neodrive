@@ -25,7 +25,7 @@ include 'u-checkin-mood.php'; ?>
         </div>
         <div class="header-buttons">
             <a href="../pomodoro/timer.php">NeoSpace</a>
-            <a href="../pc/pccollection.php">Collection</a>
+            <a href="../pc/u-pc-collection.php">Collection</a>
             <a href="../quotes/quotes.php">Quotes</a>
             <a href="../profile/profile.php" class="profile-icon"><i class="fa-solid fa-user-circle"></i></a>
         </div>

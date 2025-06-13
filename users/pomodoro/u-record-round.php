@@ -32,20 +32,18 @@ if (!$row) {
     exit;
 }
 
-$total_rounds = (int)$row['total_rounds'];
-$current_completed = (int)$row['completed_rounds'];
+$total_rounds = (int) $row['total_rounds'];
+$current_completed = (int) $row['completed_rounds'];
 
-// Only update if this is a new work round (greater than current completed_rounds)
 if ($round > $current_completed) {
+    // Update session progress
     if ($round >= $total_rounds) {
-        // Final work round completed — mark session completed
         $stmt = $conn->prepare("
             UPDATE timer_sessions 
             SET completed_rounds = ?, status = 'completed', ended_at = NOW() 
             WHERE session_id = ? AND user_id = ?
         ");
     } else {
-        // Ongoing session — update completed_rounds only
         $stmt = $conn->prepare("
             UPDATE timer_sessions 
             SET completed_rounds = ? 
@@ -54,16 +52,50 @@ if ($round > $current_completed) {
     }
 
     $stmt->bind_param("iii", $round, $session_id, $user_id);
-
-    if ($stmt->execute()) {
-        echo "Work round recorded successfully.";
-    } else {
-        echo "Error updating session: " . $stmt->error;
-    }
-
+    $stmt->execute();
     $stmt->close();
+
+    // 🧃 If it's the final round, reward a photocard
+    if ($round >= $total_rounds) {
+        // Get a random active photocard the user DOES NOT own yet
+        $pcQuery = $conn->prepare("
+            SELECT pc_id, pc_filepath, pc_title 
+            FROM photocard_library 
+            WHERE pc_status = 'active' 
+            AND pc_id NOT IN (
+                SELECT pc_id FROM user_pccollection WHERE user_id = ?
+            )
+            ORDER BY RAND()
+            LIMIT 1
+        ");
+        $pcQuery->bind_param("i", $user_id);
+        $pcQuery->execute();
+        $pcResult = $pcQuery->get_result();
+        $pcRow = $pcResult->fetch_assoc();
+        $pcQuery->close();
+
+        if ($pcRow) {
+            // Insert into user collection
+            $insert = $conn->prepare("
+                INSERT INTO user_pccollection (user_id, pc_id, rewarded_at) 
+                VALUES (?, ?, NOW())
+            ");
+            $insert->bind_param("ii", $user_id, $pcRow['pc_id']);
+            $insert->execute();
+            $insert->close();
+
+            // Output the photocard as image
+            $img_src = '../../' . $pcRow['pc_filepath'];
+
+            echo "<img src='" . htmlspecialchars($img_src) . "' alt='" . htmlspecialchars($pcRow['pc_title']) . "' style='max-width:60%; border-radius:8px;'>";
+
+        } else {
+            echo "No new photocard available to reward.";
+        }
+    } else {
+        echo "Work round recorded successfully.";
+    }
 } else {
-    // No new round — don't update
     echo "No update needed. Current round already recorded.";
 }
 

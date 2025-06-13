@@ -38,7 +38,7 @@ $user_id = $_SESSION['user_id'];
             <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
      link-underline-opacity-75-hover" href="#">NeoSpace</a>
             <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="../pc/pccollection.php">Collection</a>
+     link-underline-opacity-75-hover" href="../pc/u-pc-collection.php">Collection</a>
             <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
      link-underline-opacity-75-hover" href="../quotes/quotes.php">Quotes</a>
             <a href="../profile/profile.php" class="profile-icon">
@@ -47,7 +47,7 @@ $user_id = $_SESSION['user_id'];
 
         </div>
 
-    </header><br>
+    </header><br><br>
     <?php if (isset($_SESSION['task_success']) && $_SESSION['task_success']): ?>
         <script>
             Swal.fire({
@@ -273,21 +273,34 @@ $user_id = $_SESSION['user_id'];
 
                     // Record completed round via AJAX
                     function recordCompletedRound(roundNumber) {
-                        fetch('u-record-round.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: 'round=' + encodeURIComponent(roundNumber) + '&session_id=' + encodeURIComponent(sessionId)
-                        })
-                            .then(response => response.text())
-                            .then(data => {
-                                console.log('Server response:', data);
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                    }
+    fetch('u-record-round.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'round=' + encodeURIComponent(roundNumber) + '&session_id=' + encodeURIComponent(sessionId)
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log('Server response:', data);
+
+        // Optional: Show photocard in SweetAlert if data contains <img>
+        if (data.includes("<img")) {
+            Swal.fire({
+                title: '🎉 You earned a photocard!',
+                html: data,
+                confirmButtonText: 'Yay!',
+                customClass: {
+                    popup: 'rounded-lg'
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 
                     // Update Timer display
                     function updateTimerDisplay() {
@@ -295,67 +308,61 @@ $user_id = $_SESSION['user_id'];
                     }
 
                     function timerTick() {
-                        if (!isPaused && timeLeft > 0) {
-                            timeLeft--;
-                            updateTimerDisplay();
-                            saveTimerState();
-                        }
+    if (!isPaused && timeLeft > 0) {
+        timeLeft--;
+        updateTimerDisplay();
+        saveTimerState();
+    }
 
-                        if (timeLeft === 0) {
-                            clearInterval(timerInterval);
-                            saveTimerState();
+    if (timeLeft === 0) {
+        clearInterval(timerInterval);
+        saveTimerState();
 
-                        if (isRound) {
-                                playSound();
-                                recordCompletedRound(currentRound);
+        if (isRound) {
+            playSound();
+            recordCompletedRound(currentRound); // ⬅️ Now this will trigger photocard logic
 
-                        // If it's the last round, show final completion alert and reset
-                        if (currentRound >= totalRounds) {
-                        playSound();
-                        Swal.fire({
-                            icon: 'success',
-                            title: '🎯 All rounds complete!',
-                            text: 'Well done! You finished your Pomodoro session.',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Awesome!'
-                        });
-                        resetTimer();
-                        return;
-                        }
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: `🎉 Round ${currentRound} complete!`,
-                                    showConfirmButton: true,
-                                    confirmButtonText: 'OK',
-                                    timer: 6000
-                                });
+            if (currentRound >= totalRounds) {
+    recordCompletedRound(currentRound); // This will handle both round + photocard
+    return;
+}
 
-                                // Enable break button for the next round
-                                startRoundBtn.disabled = true;
-                                startBreakBtn.disabled = false;
-                                pauseBtn.disabled = true;
-                                isRound = false;
 
-                            } else {
-                                    playSound(); // 🔔 Alert sound after break ends
-                                    Swal.fire({
-                                        icon: 'info',
-                                        title: `⏱️ Break complete!`,
-                                        text: `Get ready for Round ${currentRound + 1}`,
-                                        showConfirmButton: true,
-                                        timer: 6000
-                                    });
+            Swal.fire({
+                icon: 'success',
+                title: `🎉 Round ${currentRound} complete!`,
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+                timer: 6000
+            });
 
-                                    currentRound++;
-                                    startRoundBtn.disabled = false;
-                                    startBreakBtn.disabled = true;
-                                    pauseBtn.disabled = true;
-                                    isRound = true;
-                                }
+            startRoundBtn.disabled = true;
+            startBreakBtn.disabled = false;
+            pauseBtn.disabled = true;
+            isRound = false;
 
-                            saveTimerState();
-                        }
-                    }
+        } else {
+            // Break complete
+            playSound();
+            Swal.fire({
+                icon: 'info',
+                title: `⏱️ Break complete!`,
+                text: `Get ready for Round ${currentRound + 1}`,
+                showConfirmButton: true,
+                timer: 6000
+            });
+
+            currentRound++;
+            startRoundBtn.disabled = false;
+            startBreakBtn.disabled = true;
+            pauseBtn.disabled = true;
+            isRound = true;
+        }
+
+        saveTimerState();
+    }
+}
+
 
                     function startRound() {
                         timeLeft = roundTime;

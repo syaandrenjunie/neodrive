@@ -7,7 +7,7 @@ $static_sidebar = ($current_page === 'admindashboard.php');
 
 // Actual count queries
 $user_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM users"))['total'];
-$pomodoro_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM pomodoro_session"))['total'];
+$pomodoro_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM timer_sessions"))['total'];
 $photocards_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM photocard_library"))['total'];
 $quotes_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM quotes_library"))['total'];
 $moods_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM mood_checkin"))['total'];
