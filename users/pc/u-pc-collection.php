@@ -76,7 +76,7 @@ $conn->close();
     <!-- PC Type preview -->
     <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
         <div class="col">
-            <div class="card h-100 shadow-sm bg-common">
+            <div class="card h-100  bg-common">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
                         <i class="fa-solid fa-star text-secondary  me-3"></i>
@@ -88,7 +88,7 @@ $conn->close();
         </div>
 
         <div class="col">
-            <div class="card h-100 shadow-sm bg-rare">
+            <div class="card h-100 bg-rare">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
                         <i class="fa-solid fa-gem text-warning  me-3"></i>
@@ -96,12 +96,12 @@ $conn->close();
                     </div>
                     <span class="fs-5"><?php echo $type_counts['Rare']; ?></span>
                 </div>
-                
+
             </div>
         </div>
 
         <div class="col">
-            <div class="card h-100 shadow-sm bg-exclusive">
+            <div class="card h-100 bg-exclusive">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
                         <i class="fa-solid fa-crown text-danger  me-3"></i>
@@ -194,7 +194,8 @@ $conn->close();
         .flip-card-inner {
             position: relative;
             width: 95%;
-    padding-top: 120%; /* shorter height */
+            padding-top: 120%;
+            /* shorter height */
             /* For aspect ratio */
             transition: transform 0.6s;
             transform-style: preserve-3d;
@@ -240,10 +241,11 @@ $conn->close();
         .bg-common,
         .bg-rare,
         .bg-exclusive {
-            background-color: rgb(229, 255, 156);
+            background-color: rgb(215, 252, 194);
+            box-shadow: 0 10px 30px rgb(180, 241, 172);
             color: #333;
-        }
 
+        }
     </style>
 
 </body>

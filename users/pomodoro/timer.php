@@ -47,7 +47,7 @@ $user_id = $_SESSION['user_id'];
 
         </div>
 
-    </header><br><br>
+    </header><br>
     <?php if (isset($_SESSION['task_success']) && $_SESSION['task_success']): ?>
         <script>
             Swal.fire({
@@ -71,10 +71,11 @@ $user_id = $_SESSION['user_id'];
             </div>
             <!-- Button trigger modal -->
 
-            <button type="button" class="btn btn-primary d-block mx-auto" data-bs-toggle="modal"
+            <button type="button" class="btn custom-timer-btn d-block mx-auto" data-bs-toggle="modal"
                 data-bs-target="#timerModal">
                 Set Timer
             </button>
+
 
             <!-- Modal -->
             <div class="modal fade" id="timerModal" tabindex="-1" aria-labelledby="timerModalLabel" aria-hidden="true">
@@ -110,7 +111,7 @@ $user_id = $_SESSION['user_id'];
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="submit" class="btn custom-save-btn">Save</button>
                             </div>
                         </form>
 
@@ -145,10 +146,10 @@ $user_id = $_SESSION['user_id'];
                 ?>
 
                 <div id="timerButtons" style="display:none; margin-top: 20px;">
-                    <button id="startRoundBtn" class="btn btn-success">Start Round</button>
-                    <button id="startBreakBtn" class="btn btn-warning" disabled>Start Break</button>
-                    <button id="pauseBtn" class="btn btn-secondary" disabled>Pause</button>
-                    <button id="resetBtn" class="btn btn-danger">Reset</button>
+                    <button id="startRoundBtn" class="btn custom-start-btn">Start Round</button>
+                    <button id="startBreakBtn" class="btn custom-break-btn" disabled>Start Break</button>
+                    <button id="pauseBtn" class="btn custom-pause-btn" disabled>Pause</button>
+                    <button id="resetBtn" class="btn custom-reset-btn">Reset</button>
                 </div>
                 <script>
                     Swal.fire({
@@ -273,33 +274,33 @@ $user_id = $_SESSION['user_id'];
 
                     // Record completed round via AJAX
                     function recordCompletedRound(roundNumber) {
-    fetch('u-record-round.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'round=' + encodeURIComponent(roundNumber) + '&session_id=' + encodeURIComponent(sessionId)
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log('Server response:', data);
+                        fetch('u-record-round.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'round=' + encodeURIComponent(roundNumber) + '&session_id=' + encodeURIComponent(sessionId)
+                        })
+                            .then(response => response.text())
+                            .then(data => {
+                                console.log('Server response:', data);
 
-        // Optional: Show photocard in SweetAlert if data contains <img>
-        if (data.includes("<img")) {
-            Swal.fire({
-                title: '🎉 You earned a photocard!',
-                html: data,
-                confirmButtonText: 'Yay!',
-                customClass: {
-                    popup: 'rounded-lg'
-                }
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
+                                // Optional: Show photocard in SweetAlert if data contains <img>
+                                if (data.includes("<img")) {
+                                    Swal.fire({
+                                        title: '🎉 You earned a photocard!',
+                                        html: data,
+                                        confirmButtonText: 'Yay!',
+                                        customClass: {
+                                            popup: 'rounded-lg'
+                                        }
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                    }
 
 
                     // Update Timer display
@@ -308,60 +309,60 @@ $user_id = $_SESSION['user_id'];
                     }
 
                     function timerTick() {
-    if (!isPaused && timeLeft > 0) {
-        timeLeft--;
-        updateTimerDisplay();
-        saveTimerState();
-    }
+                        if (!isPaused && timeLeft > 0) {
+                            timeLeft--;
+                            updateTimerDisplay();
+                            saveTimerState();
+                        }
 
-    if (timeLeft === 0) {
-        clearInterval(timerInterval);
-        saveTimerState();
+                        if (timeLeft === 0) {
+                            clearInterval(timerInterval);
+                            saveTimerState();
 
-        if (isRound) {
-            playSound();
-            recordCompletedRound(currentRound); // ⬅️ Now this will trigger photocard logic
+                            if (isRound) {
+                                playSound();
+                                recordCompletedRound(currentRound); // ⬅️ Now this will trigger photocard logic
 
-            if (currentRound >= totalRounds) {
-    recordCompletedRound(currentRound); // This will handle both round + photocard
-    return;
-}
+                                if (currentRound >= totalRounds) {
+                                    recordCompletedRound(currentRound); // This will handle both round + photocard
+                                    return;
+                                }
 
 
-            Swal.fire({
-                icon: 'success',
-                title: `🎉 Round ${currentRound} complete!`,
-                showConfirmButton: true,
-                confirmButtonText: 'OK',
-                timer: 6000
-            });
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: `🎉 Round ${currentRound} complete!`,
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'OK',
+                                    timer: 6000
+                                });
 
-            startRoundBtn.disabled = true;
-            startBreakBtn.disabled = false;
-            pauseBtn.disabled = true;
-            isRound = false;
+                                startRoundBtn.disabled = true;
+                                startBreakBtn.disabled = false;
+                                pauseBtn.disabled = true;
+                                isRound = false;
 
-        } else {
-            // Break complete
-            playSound();
-            Swal.fire({
-                icon: 'info',
-                title: `⏱️ Break complete!`,
-                text: `Get ready for Round ${currentRound + 1}`,
-                showConfirmButton: true,
-                timer: 6000
-            });
+                            } else {
+                                // Break complete
+                                playSound();
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: `⏱️ Break complete!`,
+                                    text: `Get ready for Round ${currentRound + 1}`,
+                                    showConfirmButton: true,
+                                    timer: 6000
+                                });
 
-            currentRound++;
-            startRoundBtn.disabled = false;
-            startBreakBtn.disabled = true;
-            pauseBtn.disabled = true;
-            isRound = true;
-        }
+                                currentRound++;
+                                startRoundBtn.disabled = false;
+                                startBreakBtn.disabled = true;
+                                pauseBtn.disabled = true;
+                                isRound = true;
+                            }
 
-        saveTimerState();
-    }
-}
+                            saveTimerState();
+                        }
+                    }
 
 
                     function startRound() {
@@ -396,7 +397,6 @@ $user_id = $_SESSION['user_id'];
                         saveTimerState();
                     }
 
-                    // Pause/Resume Timer
                     function pauseTimer() {
                         if (isPaused) {
                             isPaused = false;
@@ -411,7 +411,6 @@ $user_id = $_SESSION['user_id'];
                         saveTimerState();
                     }
 
-                    // Reset Timer
                     function resetTimer() {
                         clearInterval(timerInterval);
                         currentRound = 1;
@@ -472,7 +471,7 @@ $user_id = $_SESSION['user_id'];
 
         <div class="container mt-4">
             <div class="todo-container">
-                <h2 style="color: white;">To-Do List</h2>
+                <h2 style="color: green;">To-Do List</h2>
                 <form method="POST" action="">
                     <input type="text" id="taskName" name="task_name" class="form-control mb-2" placeholder="Task Name"
                         required>
@@ -487,7 +486,7 @@ $user_id = $_SESSION['user_id'];
                         <?php endforeach; ?>
                     </select>
 
-                    <button type="submit" class="btn btn-primary">Add Task</button>
+                    <button type="submit" class="btn custom-add-task-btn">Add Task</button>
                 </form>
 
                 <div id="taskList" class="mt-3">
@@ -497,7 +496,7 @@ $user_id = $_SESSION['user_id'];
                         JOIN priority_levels p ON t.priority_id = p.priority_id
                         WHERE t.user_id = $user_id AND t.task_status = 'active'
                         ORDER BY 
-                            t.is_completed ASC,  -- incomplete (0) first, completed (1) last
+                            t.is_completed ASC,  
                         CASE p.level_name
                         WHEN 'High' THEN 1
                         WHEN 'Medium' THEN 2
@@ -518,9 +517,10 @@ $user_id = $_SESSION['user_id'];
                                         <?= htmlspecialchars($row['task_name']) ?> (<?= ucfirst($row['level_name']) ?>)
                                     </span>
 
-                                    <div class="task-details" style="color: <?= $row['is_completed'] ? 'white' : 'initial' ?>;">
+                                    <div class="task-details <?= $row['is_completed'] ? 'completed-details' : '' ?>">
                                         <?= nl2br(htmlspecialchars($row['task_details'])) ?>
                                     </div>
+
                                 </div>
 
                                 <div class="buttons">
@@ -580,7 +580,7 @@ $user_id = $_SESSION['user_id'];
                     confirmButtonText: "Nice!"
                 });
             </script>
-            <?php unset($_SESSION['task_completed']); // Unset session flag to prevent it from showing again ?>
+            <?php unset($_SESSION['task_completed']); ?>
         <?php endif; ?>
 
 
@@ -632,7 +632,7 @@ $user_id = $_SESSION['user_id'];
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <button type="submit" class="btn custom-save-btn">Save Changes</button>
                             </div>
                         </div>
                     </form>
@@ -708,9 +708,9 @@ $user_id = $_SESSION['user_id'];
 
     </script>
 
-
     <style>
-        .completed-task {
+        .completed-task,
+        .completed-details {
             text-decoration: line-through;
             color: darkred;
         }
@@ -736,6 +736,86 @@ $user_id = $_SESSION['user_id'];
             border - color: rgb(0, 255, 76);
             box-shadow: 0 0 8px rgb(107, 250, 88);
             outline: none;
+        }
+
+        .custom-timer-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(233, 155, 191);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .custom-timer-btn:hover {
+            background-color: rgb(250, 170, 190);
+            color: white;
+            transform: translateY(-2px);
+
+        }
+
+        .custom-add-task-btn {
+            background-color: rgb(233, 155, 191);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-add-task-btn:hover {
+            background-color: rgb(250, 170, 190);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-add-task-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-save-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-save-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
+        }
+
+        .custom-start-btn,
+        .custom-break-btn,
+        .custom-pause-btn,
+        .custom-reset-btn {
+            background-color: rgb(133, 224, 97);/ color: black;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-start-btn,
+        .custom-break-btn,
+        .custom-pause-btn,
+        .custom-reset-btn:hover {
+            background-color: rgb(144, 231, 132);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(64, 155, 28, 0.83);
+        }
+
+        .custom-start-btn,
+        .custom-break-btn,
+        .custom-pause-btn,
+        .custom-reset-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 3px 6px rgba(121, 199, 119, 0.83);
         }
     </style>
 

@@ -114,7 +114,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                 col.className = "col-md-3 mb-2";
 
                 col.innerHTML = `
-                    <div class="card mb-3" style="max-width: 18rem; background-color:rgb(193, 241, 116);">
+                    <div class="card mb-3" style="max-width: 18rem; background-color:rgb(193, 241, 116); box-shadow: 0 10px 30px rgb(169, 255, 158);
+">
                             <div class="card-header">
                                 ${quote.author}
                                 <i class="fa-solid fa-thumbtack pin-icon ${quote.pinned ? "pinned" : ""}" onclick="togglePin(${quote.id})"></i>
@@ -203,8 +204,35 @@ if ($result && mysqli_num_rows($result) > 0) {
         }
 
         .custom-tooltip {
-            --bs-tooltip-bg: rgb(248, 255, 147);
-            --bs-tooltip-color: #000;
+            --bs-tooltip-bg: rgb(255, 45, 115);
+            --bs-tooltip-color: white;
+        }
+
+        .floating-icon {
+            position: fixed;
+            bottom: 20px;
+            /* Distance from the bottom */
+            right: 20px;
+            /* Distance from the right */
+            background-color: rgb(233, 155, 191);
+            color: white;
+            width: 60px;
+      height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        .floating-icon:hover {
+            background-color: rgb(250, 170, 190);
+            transform: scale(1.05);
+
         }
     </style>
 

@@ -1,11 +1,8 @@
 <?php
-// Include DB connection and session start
 include '../../database/dbconn.php';
 session_start();
 
-// Check if the user is logged in by verifying session data
 if (!isset($_SESSION['user_id'])) {
-  // Redirect to login if the user is not logged in
   header("Location: ../../login.php");
   exit();
 }
@@ -55,15 +52,12 @@ if ($result) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-
-
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -94,11 +88,41 @@ if ($result) {
     </div>
   </header><br>
 
+  <?php if (isset($_SESSION['success_message'])): ?>
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: '<?php echo $_SESSION['success_message']; ?>',
+        confirmButtonColor: '#28a745'
+      });
+    </script>
+    <?php unset($_SESSION['success_message']); ?>
+  <?php endif; ?>
+
+  <?php if (isset($_SESSION['error_message'])): ?>
+    <script>
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '<?php echo $_SESSION['error_message']; ?>',
+        confirmButtonColor: '#dc3545'
+      });
+    </script>
+    <?php unset($_SESSION['error_message']); ?>
+  <?php endif; ?>
+
+
   <div class="row g-4 mt-0 mb-4 px-2">
     <div class="col-md-4">
-      <div class="profile-details shadow-sm rounded p-4 bg-white position-relative">
+      <div class="profile-details rounded p-4 position-relative"
+        style="background-color: rgb(215, 252, 194); color: #333; box-shadow: 0 10px 30px rgb(169, 255, 158);">
         <div class="profile-pic-container mx-auto position-relative mb-3">
-          <img src="../../assets/image/IMG_1197.JPG" alt="" class="profile-pic">
+          <?php
+          $default_picture = '../../assets/image/IMG_1197.JPG';
+          $profile_picture = !empty($user_data['profile_picture']) ? '../../' . $user_data['profile_picture'] : $default_picture;
+          ?>
+          <img src="<?php echo htmlspecialchars($profile_picture); ?>" alt="Profile Picture" class="profile-pic">
           <span class="edit-icon" data-bs-toggle="modal" data-bs-target="#editProfileModal">
             <i class="bi bi-pencil-fill"></i>
           </span>
@@ -109,10 +133,10 @@ if ($result) {
         <p><i class="bi bi-star me-1"></i><strong>Bias:</strong> <?php echo htmlspecialchars($user_data['bias']); ?></p>
 
         <p class="mt-3 text-center">
-          <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-            data-bs-target="#editProfileModal">
+          <button type="button" class="custom-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
             <i class="bi bi-pencil-square"></i> Edit Profile
           </button>
+
         </p>
       </div>
 
@@ -131,14 +155,16 @@ if ($result) {
             <form action="u-update-profile.php" method="POST" enctype="multipart/form-data">
               <div class="mb-3">
                 <label for="username" class="form-label text-success"><strong>Username</strong></label>
-                <input type="text" class="form-control" id="username"
+                <input type="text" class="form-control" id="username" name="username"
                   value="<?php echo htmlspecialchars($user_data['username']); ?>">
+
               </div>
 
               <div class="mb-3">
                 <label for="email" class="form-label text-success"><strong>Email address</strong></label>
-                <input type="email" class="form-control" id="email"
+                <input type="email" class="form-control" id="email" name="email"
                   value="<?php echo htmlspecialchars($user_data['email']); ?>">
+
               </div>
 
               <div class="mb-3">
@@ -156,21 +182,22 @@ if ($result) {
 
               <div class="mb-3">
                 <label for="profilePic" class="form-label text-success"><strong>Profile Picture</strong></label>
-                <input type="file" class="form-control" id="profilePic">
+                <input type="file" class="form-control" name="profilePic" accept="image/*">
+
               </div>
-            </form>
 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="submit" class="btn custom-save-btn">Save Changes</button>
           </div>
+          </form>
         </div>
       </div>
     </div>
 
     <div class="col-md-4">
-      <div class="session-history shadow-sm rounded p-4 bg-white">
+      <div class="session-history rounded p-4" style="background-color: rgb(215, 252, 194); color: #333; box-shadow: 0 10px 30px rgb(169, 255, 158);">
         <h5 class="text-center mb-4 fw-bold text-dark">
           <i class="bi bi-hourglass-bottom me-2"></i>Completed Sessions
         </h5>
@@ -178,7 +205,7 @@ if ($result) {
         <?php if ($session_result->num_rows > 0): ?>
           <ul class="list-group list-group-flush">
             <?php while ($session = $session_result->fetch_assoc()): ?>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
+              <li class="list-group-item completed-item d-flex justify-content-between align-items-center">
                 <div>
                   Completed <?php echo htmlspecialchars($session['completed_rounds']); ?>
                   round<?php echo ($session['completed_rounds'] > 1) ? 's' : ''; ?>
@@ -197,7 +224,7 @@ if ($result) {
 
 
     <div class="col-md-4">
-      <div class="todo-history shadow-sm rounded p-4 bg-white">
+      <div class="todo-history rounded p-4" style=" background-color: rgb(215, 252, 194); color: #333; box-shadow: 0 10px 30px rgb(169, 255, 158);">
         <h5 class="text-center mb-4 fw-bold text-dark">
           <i class="bi bi-check-circle-fill me-2"></i>Completed Tasks
         </h5>
@@ -205,7 +232,7 @@ if ($result) {
         <?php if ($todo_result->num_rows > 0): ?>
           <ul class="list-group list-group-flush">
             <?php while ($task = $todo_result->fetch_assoc()): ?>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
+              <li class="list-group-item custom-blend d-flex justify-content-between align-items-center">
                 <div class="text-truncate" style="max-width: 70%;">
                   <?php echo htmlspecialchars($task['task_name']); ?>
                 </div>
@@ -221,13 +248,78 @@ if ($result) {
       </div>
     </div>
 
+    <!-- Floating Chatbot Icon -->
+    <div id="chat-icon" class="chat-icon" data-bs-toggle="tooltip" data-bs-placement="left"
+      data-bs-custom-class="custom-tooltip" title="Need help?">
+      <i class="bi bi-chat-dots-fill icon-inner"></i>
+    </div>
 
+
+    <!-- Chatbox Panel -->
+    <div id="chat-box" class="chat-box">
+      <div class="chat-title">NeoBot 🤖</div>
+      <div id="chat-history" class="chat-history"></div>
+      <form id="chatForm">
+        <input type="text" id="userMessage" name="user_message" class="form-control form-control-sm mb-2"
+          placeholder="Type a message..." required>
+        <button type="submit" class="custom-chat-btn">Send</button>
+      </form>
+    </div>
 
   </div>
   </div>
-  <!-- Bootstrap JS Bundle with Popper -->
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+  <script>
+    const chatIcon = document.getElementById("chat-icon");
+    const chatBox = document.getElementById("chat-box");
+    const chatHistory = document.getElementById("chat-history");
+    let isChatOpened = false;
+
+    chatIcon.addEventListener("click", () => {
+      const isVisible = chatBox.style.display === "block";
+      chatBox.style.display = isVisible ? "none" : "block";
+
+      if (!isVisible && !isChatOpened) {
+        chatHistory.innerHTML = `<div class="bot-message">🤖: Hi there! 👋</div>`;
+        isChatOpened = true;
+      }
+
+      if (isVisible) {
+        chatHistory.innerHTML = "";
+        isChatOpened = false;
+      }
+    });
+
+    document.getElementById("chatForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const messageInput = document.getElementById('userMessage');
+      const message = messageInput.value.trim();
+      if (!message) return;
+
+      fetch('../chatlog/u-chatbot.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'user_message=' + encodeURIComponent(message)
+      })
+        .then(response => response.text())
+        .then(botReply => {
+          chatHistory.innerHTML += `<div class="user-message">💚: ${message}</div>`;
+          chatHistory.innerHTML += `<div class="bot-message">🤖: ${botReply}</div>`;
+          messageInput.value = '';
+          chatHistory.scrollTop = chatHistory.scrollHeight;
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+    });
+    
+  </script>
 
   <style>
     .profile-details,
@@ -246,9 +338,7 @@ if ($result) {
     .session-history:hover,
     .todo-history:hover {
       transform: scale(1.03);
-      /* Slightly enlarge */
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      /* Optional: glow effect */
     }
 
 
@@ -258,9 +348,7 @@ if ($result) {
       border-radius: 12px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
       height: auto;
-      /* Don't fix height */
       min-height: 250px;
-      /* Optional */
       text-align: center;
     }
 
@@ -272,7 +360,6 @@ if ($result) {
       border: 3px solid #dcdcdc;
       display: inline-block;
     }
-
 
     .header-buttons .dropdown {
       display: inline-block;
@@ -319,6 +406,163 @@ if ($result) {
 
     .edit-icon:hover {
       background-color: #f0f0f0;
+    }
+
+    .completed-item {
+      background-color: rgb(215, 252, 194);
+      border: none;
+      border-bottom: 1px solid #a3d9a5;
+    }
+
+    .custom-blend {
+      background-color: transparent;
+      border-color: rgb(215, 252, 194);
+      border: none;
+      border-bottom: 1px solid #a3d9a5;
+    }
+
+    .custom-save-btn {
+      padding: 8px 16px;
+      font-size: 1rem;
+      background-color: rgb(172, 236, 134);
+      color: black;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .custom-save-btn:hover {
+      background-color: rgb(98, 151, 55);
+      color: white;
+    }
+
+    .chat-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: rgb(233, 155, 191);
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      
+    }
+
+    .chat-icon:hover {
+      background-color: rgb(250, 170, 190);
+      transform: scale(1.15);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      
+    }
+
+    .icon-inner {
+      font-size: 1.5rem;
+    }
+
+    .chat-box {
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      padding: 10px;
+    }
+
+    .chat-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .chat-history {
+      height: 200px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .custom-chat-btn {
+      width: 100%;
+      background-color: rgb(233, 155, 191);
+      color: white;
+      border: none;
+      padding: 8px 0;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .custom-chat-btn:hover {
+      background-color: rgb(173, 26, 88);
+      transform: scale(1.02);
+    }
+
+    .custom-chat-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* User Message (right aligned) */
+    .user-message {
+      background-color: rgb(255, 227, 236);
+      color: #0f5132;
+      padding: 6px 10px;
+      margin: 5px 0;
+      border-radius: 10px;
+      max-width: 80%;
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    /* Bot Message (left aligned) */
+    .bot-message {
+      background-color: #f8f9fa;
+      color: #212529;
+      padding: 6px 10px;
+      margin: 5px 0;
+      border-radius: 10px;
+      max-width: 80%;
+      align-self: flex-start;
+      text-align: left;
+    }
+
+    /* For flex column layout in chat history */
+    #chat-history {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .custom-btn {
+      background-color: rgb(81, 168, 46);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      transition: 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .custom-btn:hover {
+      background-color: rgb(118, 240, 81);
+      transform: scale(1.05);
+      color: #fff;
+    }
+
+    .custom-tooltip {
+      --bs-tooltip-bg: rgb(255, 45, 115);
+      --bs-tooltip-color: white;
     }
   </style>
 

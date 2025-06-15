@@ -9,8 +9,8 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Check if the form was submitted via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Get and trim inputs
   $username = trim($_POST['username']);
   $email = trim($_POST['email']);
   $bias = trim($_POST['bias']);
@@ -31,39 +31,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $destPath = $uploadFileDir . $newFileName;
 
       if (!is_dir($uploadFileDir)) {
-        mkdir($uploadFileDir, 0755, true); // Create the directory if not exists
+        mkdir($uploadFileDir, 0755, true);
       }
 
+      // Get old image from DB
+$get_old_query = $conn->prepare("SELECT profile_picture FROM users WHERE user_id = ?");
+$get_old_query->bind_param("i", $user_id);
+$get_old_query->execute();
+$get_old_query->bind_result($old_profile_picture);
+$get_old_query->fetch();
+$get_old_query->close();
+
+if (!empty($old_profile_picture) && file_exists('../../' . $old_profile_picture)) {
+  unlink('../../' . $old_profile_picture); // delete the old file
+}
+
+
       if (move_uploaded_file($fileTmpPath, $destPath)) {
-        $profile_picture_path = 'assets/uploads/' . $newFileName; // relative path for DB
+        $profile_picture_path = 'assets/uploads/' . $newFileName;
       }
     }
   }
 
-  // Update query with conditional profile picture update
-  $query = "UPDATE users SET username = ?, email = ?, bias = ?" .
-           ($profile_picture_path ? ", profile_picture = ?" : "") .
-           " WHERE user_id = ?";
+  // Dynamic SQL generation
+  $fields = [];
+  $params = [];
+  $param_types = "";
 
-  $stmt = $conn->prepare($query);
-
-  if ($profile_picture_path) {
-    $stmt->bind_param("ssssi", $username, $email, $bias, $profile_picture_path, $user_id);
-  } else {
-    $stmt->bind_param("sssi", $username, $email, $bias, $user_id);
+  if (!empty($username)) {
+    $fields[] = "username = ?";
+    $params[] = $username;
+    $param_types .= "s";
   }
 
-  if ($stmt->execute()) {
-    $_SESSION['success_message'] = "Profile updated successfully!";
-  } else {
-    $_SESSION['error_message'] = "Failed to update profile.";
+  if (!empty($email)) {
+    $fields[] = "email = ?";
+    $params[] = $email;
+    $param_types .= "s";
   }
 
-  $stmt->close();
-  header("Location: u-profile.php");
+  if (!empty($bias)) {
+    $fields[] = "bias = ?";
+    $params[] = $bias;
+    $param_types .= "s";
+  }
+
+  if (!empty($profile_picture_path)) {
+    $fields[] = "profile_picture = ?";
+    $params[] = $profile_picture_path;
+    $param_types .= "s";
+  }
+
+  if (count($fields) > 0) {
+    $params[] = $user_id;
+    $param_types .= "i";
+
+    $query = "UPDATE users SET " . implode(", ", $fields) . " WHERE user_id = ?";
+    $stmt = $conn->prepare($query);
+
+    if ($stmt === false) {
+      $_SESSION['error_message'] = "Prepare failed: " . $conn->error;
+      header("Location: profile.php");
+      exit();
+    }
+
+    $stmt->bind_param($param_types, ...$params);
+
+    if ($stmt->execute()) {
+      $_SESSION['success_message'] = "Profile updated successfully!";
+    } else {
+      $_SESSION['error_message'] = "Failed to update profile.";
+    }
+
+    $stmt->close();
+  } else {
+    $_SESSION['error_message'] = "No changes were made.";
+  }
+
+  header("Location: profile.php");
   exit();
 } else {
-  header("Location: u-profile.php");
+  header("Location: profile.php");
   exit();
 }
 ?>

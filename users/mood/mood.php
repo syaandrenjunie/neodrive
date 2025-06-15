@@ -37,61 +37,65 @@ include 'u-checkin-mood.php'; ?>
         <div class="row">
             <div class="col-md-6">
                 <div class="card p-4 shadow-sm mood-container">
-                    <h2 class="mb-4">🎼 Mood Check-In</h2>
                     <form method="POST" action="">
-
                         <div class="mb-3">
-                            <label class="form-label">How are you feeling today?</label>
+                            <h4 class="form-label" style="color: green; font-weight: bold;">How are you feeling today?
+                            </h4><br>
                             <div class="mood-selector">
                                 <input type="radio" id="happy_jae" name="mood_type" value="happy">
                                 <label for="happy_jae">
                                     <img src="../../assets/image/jae.png" alt="Happy - Jaehyun" title="Happy - Jaehyun"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" class="mood-img img-fluid" />
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-custom-class="custom-tooltip" class="mood-img img-fluid" />
                                 </label>
 
                                 <input type="radio" id="relieved_jun" name="mood_type" value="relieved">
                                 <label for="relieved_jun">
                                     <img src="../../assets/image/chilljun.png" alt="Motivated - Xiaojun"
                                         title="Relieved - Xiaojun" data-bs-toggle="tooltip" data-bs-placement="top"
-                                        class="mood-img img-fluid" />
+                                        data-bs-custom-class="custom-tooltip" class="mood-img img-fluid" />
                                 </label>
 
                                 <input type="radio" id="motivated_mark" name="mood_type" value="motivated">
                                 <label for="motivated_mark">
                                     <img src="../../assets/image/markmot.png" alt="Motivated - Mark"
                                         title="Motivated - Mark" data-bs-toggle="tooltip" data-bs-placement="top"
-                                        class="mood-img img-fluid" />
+                                        data-bs-custom-class="custom-tooltip" class="mood-img img-fluid" />
                                 </label>
 
                                 <input type="radio" id="sad_renjun" name="mood_type" value="sad">
                                 <label for="sad_renjun">
                                     <img src="../../assets/image/rjsad.png" alt="Sad - Renjun" title="Sad - Renjun"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" class="mood-img img-fluid" />
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-custom-class="custom-tooltip" class="mood-img img-fluid" />
                                 </label>
 
                                 <input type="radio" id="stressed_nana" name="mood_type" value="stressed">
                                 <label for="stressed_nana">
                                     <img src="../../assets/image/nanastress.png" alt="Stressed - Jaemin"
                                         title="Stressed - Jaemin" data-bs-toggle="tooltip" data-bs-placement="top"
-                                        class="mood-img img-fluid" />
+                                        data-bs-custom-class="custom-tooltip" class="mood-img img-fluid" />
                                 </label>
 
                                 <input type="radio" id="scared_doyoung" name="mood_type" value="scared">
                                 <label for="scared_doyoung">
                                     <img src="../../assets/image/doyscared.png" alt="Scared - Doyoung"
                                         title="Scared - Doyoung" data-bs-toggle="tooltip" data-bs-placement="top"
-                                        class="mood-img img-fluid" />
+                                        data-bs-custom-class="custom-tooltip" class="mood-img img-fluid" />
                                 </label>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="userNote" class="form-label">Add your thoughts (optional)</label>
-                            <textarea class="form-control" name="user_note" id="userNote" rows="3"></textarea>
+                            <div class="mb-3">
+                                <textarea class="form-control" name="user_note" id="userNote" rows="3"
+                                    placeholder="Add your thoughts (optional)"></textarea>
+                            </div>
+
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">Share</button>
+                            <button type="submit" class="btn custom-share-btn">Share</button>
                         </div>
                     </form>
                 </div>
@@ -99,53 +103,54 @@ include 'u-checkin-mood.php'; ?>
 
 
             <!-- Modal for Mindful Note and Giphy -->
-<div class="modal fade" id="checkInModal" tabindex="-1" aria-labelledby="checkInModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="checkInModalLabel"><?= htmlspecialchars($mood_type) ?></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal fade" id="checkInModal" tabindex="-1" aria-labelledby="checkInModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="checkInModalLabel"><?= htmlspecialchars($mood_type) ?></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6><em><?= htmlspecialchars($mindful_note) ?></em></h6><br>
+                            <?php if (!empty($giphy_url)): ?>
+                                <img src="<?= $giphy_url ?>" class="img-fluid" alt="Mood GIF">
+                            <?php else: ?>
+                                <p>No GIF available.</p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <h6><em><?= htmlspecialchars($mindful_note) ?></em></h6><br>
-                <?php if (!empty($giphy_url)): ?>
-                    <img src="<?= $giphy_url ?>" class="img-fluid" alt="Mood GIF">
-                <?php else: ?>
-                    <p>No GIF available.</p>
-                <?php endif; ?>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
             <div class="col-md-6">
                 <div class="card p-4 shadow-sm mood-container">
-                    <h2 class="mb-4">🍁 Mood Check-In Records</h2>
+                    <h3 class="mb-4" style="color:green;">🍁 Mood Check-In Records</h2>
 
-                    <?php if ($result_all_checkins->num_rows > 0): ?>
-                        <div class="d-flex flex-column gap-3">
-                            <?php while ($checkin = $result_all_checkins->fetch_assoc()): ?>
-                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                                    <div class="flip-card-inner">
-                                        <div class="flip-card-front mood-<?= strtolower($checkin['mood_type']) ?>">
-                                            <?= htmlspecialchars($checkin['mood_type']); ?>
-                                        </div>
-                                        <div class="flip-card-back ">
-                                            <p ><strong>Note:</strong> <?= htmlspecialchars($checkin['user_note']); ?></p>
-                                            <p><strong>Checked In:</strong> <?= date("F j, Y, g:i a", strtotime($checkin['checkin_at'])); ?></p>
+                        <?php if ($result_all_checkins->num_rows > 0): ?>
+                            <div class="d-flex flex-column gap-3">
+                                <?php while ($checkin = $result_all_checkins->fetch_assoc()): ?>
+                                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                        <div class="flip-card-inner">
+                                            <div class="flip-card-front mood-<?= strtolower($checkin['mood_type']) ?>">
+                                                <?= htmlspecialchars($checkin['mood_type']); ?>
+                                            </div>
+                                            <div class="flip-card-back ">
+                                                <p><strong>Note:</strong> <?= htmlspecialchars($checkin['user_note']); ?></p>
+                                                <p><strong>Checked In:</strong>
+                                                    <?= date("F j, Y, g:i a", strtotime($checkin['checkin_at'])); ?></p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            <?php endwhile; ?>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-muted">No mood check-ins found.</p>
-                    <?php endif; ?>
+                                <?php endwhile; ?>
+                            </div>
+                        <?php else: ?>
+                            <p class="text-muted">No mood check-ins found.</p>
+                        <?php endif; ?>
                 </div>
             </div>
 
@@ -154,7 +159,6 @@ include 'u-checkin-mood.php'; ?>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -173,11 +177,19 @@ include 'u-checkin-mood.php'; ?>
                 new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
     </script>
     <style>
         .mood-container {
             max-width: 600px;
-            margin: 0 auto;/* Center the container horizontally */
+            margin: 0 auto;
+            /* Center the container horizontally */
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             width: 100%;
@@ -186,7 +198,8 @@ include 'u-checkin-mood.php'; ?>
         .modal-body img {
             max-height: 300px;
             width: auto;
-            display: block; /* Center the image */
+            display: block;
+            /* Center the image */
             margin: 0 auto;
         }
 
@@ -248,7 +261,6 @@ include 'u-checkin-mood.php'; ?>
             background-color: transparent;
             width: 100%;
             height: 50px;
-            /* Increase this if it's too small */
             perspective: 1000px;
         }
 
@@ -284,30 +296,58 @@ include 'u-checkin-mood.php'; ?>
         }
 
 
-        /* Optional mood type color coding */
         .mood-happy {
-            background-color: #FFD700;
-            color: #000;
+            background-color: rgb(243, 121, 168);
+            color: white;
         }
 
         .mood-sad {
-            background-color: #6495ED;
+            background-color: rgb(121, 185, 96);
+            color: white;
+
         }
 
         .mood-stressed {
-            background-color: #FF6347;
+            background-color: rgb(207, 79, 100);
+            color: white;
+
         }
 
         .mood-relieved {
-            background-color: #20B2AA;
+            background-color: rgb(136, 202, 74);
+            color: white;
+
         }
 
         .mood-motivated {
-            background-color: rgb(43, 226, 150);
+            background-color: rgb(92, 182, 57);
+            color: white;
+
         }
 
         .mood-scared {
-            background-color: rgb(87, 17, 153);
+            background-color: rgb(179, 41, 87);
+            color: white;
+
+        }
+
+        .custom-share-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-share-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
+        }
+
+        .custom-tooltip {
+            --bs-tooltip-bg: rgb(255, 110, 158);
+            --bs-tooltip-color: white;
         }
     </style>
 </body>

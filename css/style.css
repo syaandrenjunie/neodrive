@@ -330,33 +330,7 @@ body {
     color: #585252;
     font-style: italic;
   }
-  
-  
-  .floating-icon {
-    position: fixed;
-    bottom: 20px;  /* Distance from the bottom */
-    right: 20px;   /* Distance from the right */
-    background-color: #2f8f17; /* Blue color */
-    color: white;
-    width: 50px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    text-decoration: none;
-    transition: all 0.3s ease-in-out;
-    z-index: 1000; /* Ensures it's above other elements */
-  }
-  
-  .floating-icon:hover {
-    background-color: #73e94f; /* Darker blue on hover */
-    transform: scale(1.05);
-    
-  }
-  
+ 
   
   /* MOOD */
   .mood-container {
