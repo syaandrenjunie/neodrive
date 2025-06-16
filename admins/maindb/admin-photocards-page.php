@@ -17,7 +17,7 @@ $membersResult = mysqli_query($conn, $membersQuery);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photocards Main Dashboard</title>
+    <title>Photocards Management Main Dashboard</title>
     <link rel="stylesheet" href="../../css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -31,6 +31,7 @@ $membersResult = mysqli_query($conn, $membersQuery);
             <a class="link-underline link-underline-opacity-0" href="#">Photocards Management Dashboard</a>
         </div>
         <div class="header-buttons">
+            <a class="link-underline link-underline-opacity-0" href="../pc/a-user-pc.php">Entry</a>
             <a class="link-underline link-underline-opacity-0" href="#">Lists</a>
             <a class="link-underline link-underline-opacity-0" href="../pc/a-add-pc.php">New</a>
             <a href="adminprofile.php" class="profile-icon">
@@ -45,18 +46,15 @@ $membersResult = mysqli_query($conn, $membersQuery);
         <div class="search-container">
             <form action="" method="GET">
                 <div class="input-group">
-                    <!-- Search Input -->
                     <input type="text" class="form-control" name="search" id="searchInput"
                         placeholder="Search photocards..."
                         value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>"
                         aria-label="Search photocards">
 
-                    <!-- Search Icon as Submit Button -->
                     <button type="submit" class="input-group-text btn btn-link" style="color: black">
                         <i class="fa fa-search"></i>
                     </button>
 
-                    <!-- Clear Search Button -->
                     <a href="admin-photocards-page.php" class="btn btn-secondary input-group-text">Clear Search</a>
                 </div>
             </form>
@@ -82,7 +80,6 @@ $membersResult = mysqli_query($conn, $membersQuery);
 
                 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 
-                // If there is no search term, it will just show all users.
                 $query = "SELECT * FROM photocard_library ORDER BY updated_at DESC";
 
                 if (!empty($searchTerm)) {
@@ -94,7 +91,6 @@ $membersResult = mysqli_query($conn, $membersQuery);
                                OR created_at LIKE '%$searchTerm%'
                                OR updated_at LIKE '%$searchTerm%'";
 
-                    // Check if the search term exactly matches 'active' or 'inactive'
                     if (strtolower($searchTerm) === 'Active' || strtolower($searchTerm) === 'Inactive') {
                         $query .= " OR pc_status = '$searchTerm'";
                     }
@@ -309,13 +305,11 @@ $membersResult = mysqli_query($conn, $membersQuery);
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
-            // Get the image element that will trigger the sidebar
             const sidebarToggle = document.getElementById('sidebarToggle');
 
-            // Add click event to trigger sidebar
             sidebarToggle.addEventListener('click', function () {
                 const sidebar = new bootstrap.Offcanvas(document.getElementById('offcanvasWithBothOptions'));
-                sidebar.show(); // Show the sidebar when the image is clicked
+                sidebar.show(); 
             });
 
         });
@@ -358,7 +352,7 @@ $membersResult = mysqli_query($conn, $membersQuery);
         });
 
         //VIEW Modal
-        // Add event listener to open the modal and set values dynamically
+        document.addEventListener('DOMContentLoaded', function () {
         const viewButtons = document.querySelectorAll('.view-pc-btn');
 
         viewButtons.forEach(button => {
@@ -384,11 +378,12 @@ $membersResult = mysqli_query($conn, $membersQuery);
                 // Update the image preview if the file path exists
                 const imageElement = document.getElementById('modal-pc_image');
                 if (pcFilepath) {
-                    imageElement.src = '../../' + pcFilepath; // Adjust path as needed
+imageElement.src = pcFilepath;
                     imageElement.style.display = 'block'; // Ensure image is shown
                 } else {
                     imageElement.style.display = 'none'; // Hide image if there's no path
                 }
+                });
             });
         });
 
@@ -434,18 +429,15 @@ $membersResult = mysqli_query($conn, $membersQuery);
             margin-bottom: 10px;
             display: flex;
             justify-content: flex-start;
-            /* Align to the left */
         }
 
         .search-form {
             width: 800px;
             max-width: 600px;
-            /* Adjust width as needed */
         }
 
         .modal-lg {
             max-width: 50%;
-            /* Adjust the width as needed */
         }
     </style>
 </body>

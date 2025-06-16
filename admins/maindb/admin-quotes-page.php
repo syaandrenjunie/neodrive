@@ -1,7 +1,6 @@
 <?php
-include("../../include/auth.php"); // Include the authentication file
+include("../../include/auth.php"); 
 
-// Check if the user is an admin
 check_role('admin');
 ?>
 
@@ -16,8 +15,7 @@ check_role('admin');
     <link rel="stylesheet" href="../../css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<!-- Include SweetAlert library -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
@@ -139,7 +137,7 @@ check_role('admin');
                             <td>{$row['quotes_status']}</td>
                             <td>{$row['updated_at']}</td>
                             <td>
-                                <button class='btn btn-sm btn-primary view-user-btn' 
+                                <button class='btn btn-sm btn-primary view-quote-btn' 
                                     data-bs-toggle='modal' 
                                     data-bs-target='#quotesDetailModal' 
                                     data-quotes_text='{$row['quotes_text']}'
@@ -291,7 +289,7 @@ check_role('admin');
     <!-- Custom JavaScript for Sidebar Toggle -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.view-user-btn').forEach(button => {
+            document.querySelectorAll('.view-quote-btn').forEach(button => {
                 button.addEventListener('click', function () {
                     document.getElementById('modal-member_name-title').textContent = this.dataset.member_name;
                     document.getElementById('modal-type').textContent = this.dataset.type;

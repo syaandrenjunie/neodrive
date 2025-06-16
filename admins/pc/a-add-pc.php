@@ -35,16 +35,17 @@ if ($result) {
         <div class="logo-title-container">
             <img src="../../assets/image/clock.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-            <a class="link-underline link-underline-opacity-0" href="../maindb/admin-photocards-page.php">New Photocards</a>
+            <a class="link-underline link-underline-opacity-0" href="../maindb/admin-photocards-page.php"> Add New Photocards</a>
         </div>
         <div class="header-buttons">
+            <a class="link-underline link-underline-opacity-0" href="../pc/a-user-pc.php">Entry</a>
             <a class="link-underline link-underline-opacity-0" href="../maindb/admin-photocards-page.php">Lists</a>
-            <a class="link-underline link-underline-opacity-0" href="../pc/a-add-pc.php">New</a>
-            <a href="adminprofile.php" class="profile-icon">
+            <a class="link-underline link-underline-opacity-0" href="#">New</a>
+            <a href="../maindb/adminprofile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>
-    </header><br>
+    </header><br><br>
 
     <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>

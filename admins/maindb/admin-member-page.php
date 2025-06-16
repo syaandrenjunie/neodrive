@@ -1,7 +1,6 @@
 <?php
-include("../../include/auth.php"); // Include the authentication file
+include("../../include/auth.php"); 
 
-// Check if the user is an admin
 check_role('admin');
 
 ?>
@@ -29,14 +28,13 @@ check_role('admin');
                         link-underline-opacity-75-hover" href="#">List</a>
                     <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
                         link-underline-opacity-75-hover" href="../member/a-add-member.php">New</a>
-                    <a href="profile.php" class="profile-icon">
+                    <a href="adminprofile.php" class="profile-icon">
                         <i class="fa-solid fa-user-circle"></i>
                     </a>
 
             </div>
     </header><br><br>
 
-    <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>
 
     <div class="member-list">
