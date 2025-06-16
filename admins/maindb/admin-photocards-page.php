@@ -378,7 +378,7 @@ $membersResult = mysqli_query($conn, $membersQuery);
                 // Update the image preview if the file path exists
                 const imageElement = document.getElementById('modal-pc_image');
                 if (pcFilepath) {
-imageElement.src = pcFilepath;
+                imageElement.src = `../../${pcFilepath}`;
                     imageElement.style.display = 'block'; // Ensure image is shown
                 } else {
                     imageElement.style.display = 'none'; // Hide image if there's no path

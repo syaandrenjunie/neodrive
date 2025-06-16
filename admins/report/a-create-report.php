@@ -10,7 +10,7 @@ check_role('admin');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Main Dashboard</title>
+    <title>Generate New Report</title>
     <link rel="stylesheet" href="../../css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -28,7 +28,7 @@ check_role('admin');
         <div class="header-buttons">
             <a class="link-underline link-underline-opacity-0" href="../report/a-create-report.php">New</a>
             <a class="link-underline link-underline-opacity-0" href="#">Lists</a>
-            <a href="adminprofile.php" class="profile-icon">
+            <a href="../maindb/adminprofile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>

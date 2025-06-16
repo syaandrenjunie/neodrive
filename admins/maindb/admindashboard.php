@@ -254,7 +254,7 @@ check_role('admin');
                     container.innerHTML = '';
                     data.forEach(user => {
                         const cardBody = `
-                <div class="p-3 rounded text-black" style="width: 18%; background-color: rgb(179, 228, 123);">
+                <div class="p-3 rounded text-black" style="width: 18%; background-color: rgb(209, 243, 169);">
                 <h6 class="mb-1">${user.username}</h6>
                 <small class="text-muted">Completed Sessions: ${user.session_count}</small>
               </div>`;

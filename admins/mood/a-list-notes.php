@@ -31,7 +31,7 @@ include("../../database/dbconn.php");
             <a class="link-underline link-underline-opacity-0" href="../maindb/admin-moods-page.php">Lists</a>
             <a class="link-underline link-underline-opacity-0" href="#">Notes</a>
             <a class="link-underline link-underline-opacity-0" href="../mood/a-add-notes.php">New</a>
-            <a href="adminprofile.php" class="profile-icon">
+            <a href="../maindb/adminprofile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>

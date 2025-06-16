@@ -287,6 +287,8 @@ $user_id = $_SESSION['user_id'];
 
                                 // Optional: Show photocard in SweetAlert if data contains <img>
                                 if (data.includes("<img")) {
+                                        playSound(); // 🔊 Play sound when photocard is shown
+
                                     Swal.fire({
                                         title: '🎉 You earned a photocard!',
                                         html: data,

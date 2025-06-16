@@ -29,7 +29,7 @@ check_role('admin');
             <a class="link-underline link-underline-opacity-0" href="../maindb/admin-moods-page.php">List</a>
             <a class="link-underline link-underline-opacity-0" href="../mood/a-list-notes.php">Notes</a>
             <a class="link-underline link-underline-opacity-0" href="#">New</a>
-            <a href="adminprofile.php" class="profile-icon">
+            <a href="../maindb/adminprofile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>
