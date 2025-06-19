@@ -20,7 +20,7 @@ if (isset($_GET['id'])) {
         // Update status
         $update = "UPDATE users SET user_status = '$new_status' WHERE user_id = $user_id";
         if (mysqli_query($conn, $update)) {
-            header("Location: ../maindb/admin-users-page.php?status_changed=success");
+header("Location: ../maindb/admin-users-page.php?status_changed=$new_status");
             exit();
         } else {
             echo "Error updating status.";

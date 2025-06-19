@@ -35,7 +35,7 @@ include("../../database/dbconn.php");
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>
-    </header><br>
+    </header><br><br>
 
     <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>

@@ -19,7 +19,6 @@ $user_id = $_SESSION['user_id'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Round Timer</title>
     <link rel="stylesheet" href="../../css/style.css">
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -69,13 +68,11 @@ $user_id = $_SESSION['user_id'];
                     <span id="timer">00:00</span>
                 </div>
             </div>
-            <!-- Button trigger modal -->
 
             <button type="button" class="btn custom-timer-btn d-block mx-auto" data-bs-toggle="modal"
                 data-bs-target="#timerModal">
                 Set Timer
             </button>
-
 
             <!-- Modal -->
             <div class="modal fade" id="timerModal" tabindex="-1" aria-labelledby="timerModalLabel" aria-hidden="true">
@@ -287,7 +284,7 @@ $user_id = $_SESSION['user_id'];
 
                                 // Optional: Show photocard in SweetAlert if data contains <img>
                                 if (data.includes("<img")) {
-                                        playSound(); // 🔊 Play sound when photocard is shown
+                                    playSound();
 
                                     Swal.fire({
                                         title: '🎉 You earned a photocard!',
@@ -295,6 +292,10 @@ $user_id = $_SESSION['user_id'];
                                         confirmButtonText: 'Yay!',
                                         customClass: {
                                             popup: 'rounded-lg'
+                                        }
+                                    }).then(() => {
+                                        if (roundNumber >= totalRounds) {
+                                            window.location.href = '../pc/u-pc-collection.php';
                                         }
                                     });
                                 }
@@ -376,7 +377,7 @@ $user_id = $_SESSION['user_id'];
                         startRoundBtn.disabled = true;
                         startBreakBtn.disabled = true;
                         pauseBtn.disabled = false;
-                        roundInfoEl.textContent = `⏳ Round ${currentRound} of ${totalRounds}`;
+                        roundInfoEl.textContent = `Now focus!⏳ Round ${currentRound} of ${totalRounds}`;
                         isRound = true;
                         isPaused = false;
                         pauseBtn.textContent = "Pause";
@@ -392,7 +393,7 @@ $user_id = $_SESSION['user_id'];
                         startRoundBtn.disabled = true;
                         startBreakBtn.disabled = true;
                         pauseBtn.disabled = false;
-                        roundInfoEl.textContent = `🛋️ Break after Round ${currentRound}`;
+                        roundInfoEl.textContent = `Enjoy your break! 🛋️ Break after Round ${currentRound}`;
                         isRound = false;
                         isPaused = false;
                         pauseBtn.textContent = "Pause";
@@ -455,7 +456,7 @@ $user_id = $_SESSION['user_id'];
                         roundTime = <?= (int) $roundDuration ?>;
                         breakTime = <?= (int) $breakDuration ?>;
                         currentRound = 1;
-                        timeLeft = 0;
+                        timeLeft = roundTime;
                         updateTimerDisplay();
                         roundInfoEl.textContent = `Set for ${totalRounds} rounds, ${roundTime / 60} min per round, ${breakTime / 60} min break.`;
                         startRoundBtn.disabled = false;
@@ -480,7 +481,6 @@ $user_id = $_SESSION['user_id'];
                     <textarea id="taskDetails" name="task_details" class="form-control mb-2"
                         placeholder="Task Details (Optional)"></textarea>
 
-                    <!-- Priority Dropdown with Placeholder -->
                     <select id="priority" name="priority" class="form-select mb-2" required>
                         <option value="" disabled selected hidden>Choose Priority Level</option>
                         <?php foreach ($priorityLevels as $level): ?>
@@ -654,12 +654,9 @@ $user_id = $_SESSION['user_id'];
             </script>
         <?php endif; ?>
 
-
     </div>
     </div>
 
-
-    <!-- Bootstrap JavaScript (Required for Modal) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../script.js"></script>
     <script>
@@ -684,8 +681,7 @@ $user_id = $_SESSION['user_id'];
                     })
                         .then(response => response.text())
                         .then(data => {
-                            console.log(data); // Optional: log success message
-                            // You can also reload the page or update UI here
+                            console.log(data); 
                         });
                 });
             } else {

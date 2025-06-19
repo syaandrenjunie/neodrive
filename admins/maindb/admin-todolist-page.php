@@ -84,7 +84,7 @@ check_role('admin');
                     $query .= " ORDER BY t.updated_at DESC"; 
 
         $result = mysqli_query($conn, $query);
-        $i = 1; // <-- Add this line before the loop
+        $i = 1; 
 
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
@@ -99,9 +99,9 @@ check_role('admin');
                         <button class='btn btn-sm btn-primary view-task-btn' 
                             data-bs-toggle='modal' 
                             data-bs-target='#taskDetailModal' 
+                            data-bs-
                             data-task_name='{$row['task_name']}'
                             data-task_details='{$row['task_details']}'
-                            data-username='{$row['username']}'
                             data-priority='{$row['level_name']}'
                             data-status='{$row['is_completed']}'
                             data-created='{$row['created_at']}'
@@ -149,25 +149,33 @@ check_role('admin');
 
     <script>
         const sidebarToggle = document.getElementById('sidebarToggle');
-        
-        sidebarToggle.addEventListener('click', function() {
-            const sidebar = new bootstrap.Offcanvas(document.getElementById('offcanvasWithBothOptions'));
-            sidebar.show(); 
-        });
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function() {
+        const sidebar = new bootstrap.Offcanvas(document.getElementById('offcanvasWithBothOptions'));
+        sidebar.show(); 
+    });
+}
 
-        window.onload = function () {
-            document.querySelectorAll('.view-task-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    document.getElementById('modal-task_name-title').textContent = this.dataset.task_name;
-                    document.getElementById('modal-task_name').textContent = this.dataset.task_name;
-                    document.getElementById('modal-task_details').textContent = this.dataset.task_details; 
-                    document.getElementById('modal-priority').textContent = this.dataset.priority;
-                    document.getElementById('modal-status').textContent = this.dataset.status === '1' ? 'Completed' : 'Incomplete';
-                    document.getElementById('modal-created').textContent = this.dataset.created;
-                    document.getElementById('modal-updated').textContent = this.dataset.updated;
-                });
-            });
-        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const viewButtons = document.querySelectorAll('.view-task-btn');
+
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const modalTaskTitle = document.getElementById('modal-task_name-title');
+            if (!modalTaskTitle) return; // Prevent error if modal doesn't exist
+
+            modalTaskTitle.textContent = this.dataset.task_name;
+            document.getElementById('modal-task_name').textContent = this.dataset.task_name;
+            document.getElementById('modal-task_details').textContent = this.dataset.task_details;
+            document.getElementById('modal-priority').textContent = this.dataset.priority;
+            document.getElementById('modal-status').textContent = this.dataset.status === '1' ? 'Completed' : 'Incomplete';
+            document.getElementById('modal-created').textContent = this.dataset.created;
+            document.getElementById('modal-updated').textContent = this.dataset.updated;
+        });
+    });
+});
+
 
 
                 

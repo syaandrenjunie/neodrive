@@ -62,7 +62,7 @@ check_role('admin');
                 <tr>
                     <th>#</th>
                     <th>Username</th>
-                    <<th class="text-center">Pomodoro Duration</th>
+                    <th class="text-center">Pomodoro Duration</th>
                         <th class="text-center">Total Pomodoro Round</th>
                         <th class="text-center">Completed Pomodoro Round</th>
                         <th>Status</th>

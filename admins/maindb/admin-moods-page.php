@@ -16,6 +16,8 @@ check_role('admin');
     <link rel="stylesheet" href="../../css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
@@ -28,12 +30,14 @@ check_role('admin');
         <div class="header-buttons">
             <a class="link-underline link-underline-opacity-0" href="#">Lists</a>
             <a class="link-underline link-underline-opacity-0" href="../mood/a-list-notes.php">Notes</a>
+                        <a class="link-underline link-underline-opacity-0" href="../mood/a-add-notes.php">New</a>
+
 
             <a href="adminprofile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
         </div>
-    </header><br>
+    </header><br><br>
 
     <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>
@@ -74,17 +78,14 @@ check_role('admin');
             <tbody>
                 <?php
 
-                include '../../database/dbconn.php';
                 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 
                 $query = "SELECT m.*, 
-                 u.username, 
-                 n.m_notes 
-          FROM mood_checkin m
-          JOIN users u ON m.user_id = u.user_id
-          JOIN mindful_notes n ON m.mindful_note_id = n.mnotes_id
-          ORDER BY m.checkin_at DESC";
-
+                    u.username, 
+                    n.m_notes 
+                    FROM mood_checkin m
+                    JOIN users u ON m.user_id = u.user_id
+                    JOIN mindful_notes n ON m.mindful_note_id = n.mnotes_id";
 
                 if (!empty($searchTerm)) {
                     $query .= " WHERE m.user_note LIKE '%$searchTerm%' 
@@ -95,14 +96,13 @@ check_role('admin');
                                 OR u.username LIKE '%$searchTerm%' 
                                 OR n.m_notes LIKE '%$searchTerm%'";
 
-                    if (strtolower($searchTerm) === 'Active' || strtolower($searchTerm) === 'Inactive') {
-                        $query .= " OR m.mood_status = '$searchTerm'";
-                    }
                 }
 
+                $query .= " ORDER BY m.checkin_at DESC";
 
                 $result = mysqli_query($conn, $query);
                 $i = 1;
+
 
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
@@ -127,12 +127,12 @@ check_role('admin');
                                     <i class='fa-solid fa-expand'></i>
                                 </button>
                                 
-                                <a href='../mood/a-deactivate-mood.php?id={$row['mood_id']}' 
-                                class='btn btn-sm " . ($row['mood_status'] === 'Active' ? 'btn-warning' : 'btn-success') . "' 
-                                title='" . ($row['mood_status'] === 'Active' ? 'Deactivate' : 'Activate') . " User'
-                                onclick='return confirm(\"Are you sure you want to " . ($row['mood_status'] === 'Active' ? 'Deactivate' : 'Activate') . " this mood check-in?\");'>
-                                <i class='fa-solid " . ($row['mood_status'] === 'Active' ? 'fa-face-smile-wink' : 'fa-face-sad-tear') . "'></i>
-                             </a>
+                                <button 
+                                    class='btn btn-sm " . ($row['mood_status'] === 'Active' ? 'btn-warning' : 'btn-success') . " confirm-toggle-status'
+                                    data-id='{$row['mood_id']}'
+                                    data-status='{$row['mood_status']}'>
+                                    <i class='fa-solid " . ($row['mood_status'] === 'Active' ? 'fa-face-smile-wink' : 'fa-face-sad-tear') . "'></i>
+                                </button>
 
                             </td> <!-- Make sure this td wraps both buttons -->
                         </tr>";
@@ -234,6 +234,18 @@ check_role('admin');
             </div>
         </div>
 
+        <?php if (isset($_GET['status_changed']) && $_GET['status_changed'] === 'success'): ?>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Status Updated',
+        text: 'Mood Check-In status has been updated successfully.',
+        confirmButtonColor: '#3085d6'
+    });
+</script>
+<?php endif; ?>
+
+
 
         <!-- Bootstrap JS (with Popper) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -267,6 +279,30 @@ check_role('admin');
                     });
                 });
             });
+
+            document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.confirm-toggle-status').forEach(button => {
+        button.addEventListener('click', function () {
+            const moodId = this.getAttribute('data-id');
+            const currentStatus = this.getAttribute('data-status');
+            const actionText = currentStatus === 'Active' ? 'deactivate' : 'activate';
+
+            Swal.fire({
+                title: `Are you sure you want to ${actionText}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `Yes, ${actionText} it!`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `../mood/a-deactivate-mood.php?id=${moodId}`;
+                }
+            });
+        });
+    });
+});
+
         </script>
 
 

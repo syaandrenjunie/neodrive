@@ -6,6 +6,9 @@ $sql = "SELECT pc_type, COUNT(*) as count
         WHERE pc_status = 'Active'
         GROUP BY pc_type";
 
+       
+
+
 $result = mysqli_query($conn, $sql);
 
 $labels = [];

@@ -4,7 +4,6 @@ include("../../include/auth.php");
 check_role('admin');
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -106,25 +105,28 @@ check_role('admin');
 
                 // Base query
                 $query = "SELECT q.*, m.member_name FROM quotes_library q 
-                JOIN member m ON q.member_id = m.member_id 
-                ORDER BY q.updated_at DESC";
-                      
+                        JOIN member m ON q.member_id = m.member_id";
+
                 // Apply search term if available
                 if (!empty($searchTerm)) {
                     $query .= " WHERE q.quotes_text LIKE '%$searchTerm%' 
-                               OR m.member_name LIKE '%$searchTerm%' 
-                               OR q.type LIKE '%$searchTerm%' 
-                               OR q.quotes_status LIKE '%$searchTerm%' 
-                               OR q.updated_at LIKE '%$searchTerm%'";
-                
-                    // Optional: If search term is exactly 'Active' or 'Inactive', you can refine like this
+                                OR m.member_name LIKE '%$searchTerm%' 
+                                OR q.type LIKE '%$searchTerm%' 
+                                OR q.quotes_status LIKE '%$searchTerm%' 
+                                OR q.updated_at LIKE '%$searchTerm%'";
+
+                    // Optional: If search term is exactly 'Active' or 'Inactive'
                     if (strtolower($searchTerm) === 'active' || strtolower($searchTerm) === 'inactive') {
                         $query .= " OR q.quotes_status = '$searchTerm'";
                     }
                 }
-                
+
+                // ✅ Now add ORDER BY at the end
+                $query .= " ORDER BY q.updated_at DESC";
+
                 $result = mysqli_query($conn, $query);
-                $i = 1; // <-- Add this line before the loop
+                $i = 1;
+
 
 
                 if (mysqli_num_rows($result) > 0) {

@@ -55,12 +55,9 @@ body {
   
   .logo-title-container img {
     width: 40px;
-    /* Logo size */
     height: 40px;
     object-fit: contain;
-    /* Prevents stretching */
     vertical-align: middle;
-    /* Aligns image properly */
     cursor: pointer;
   }
   

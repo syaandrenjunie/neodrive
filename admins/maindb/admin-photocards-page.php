@@ -1,5 +1,5 @@
 <?php
-include("../../include/auth.php"); 
+include("../../include/auth.php");
 
 check_role('admin');
 
@@ -77,27 +77,30 @@ $membersResult = mysqli_query($conn, $membersQuery);
             <tbody>
                 <?php
                 include '../../database/dbconn.php';
-
                 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 
-                $query = "SELECT * FROM photocard_library ORDER BY updated_at DESC";
-
                 if (!empty($searchTerm)) {
-                    $query .= " WHERE pc_title LIKE '%$searchTerm%' 
-                               OR member_name LIKE '%$searchTerm%' 
-                               OR subunit LIKE '%$searchTerm%' 
-                               OR pc_type LIKE '%$searchTerm%' 
-                               OR pc_status LIKE '%$searchTerm%'
-                               OR created_at LIKE '%$searchTerm%'
-                               OR updated_at LIKE '%$searchTerm%'";
+                    $query = "SELECT * FROM photocard_library 
+                                WHERE pc_title LIKE '%$searchTerm%' 
+                                OR member_name LIKE '%$searchTerm%' 
+                                OR subunit LIKE '%$searchTerm%' 
+                                OR pc_type LIKE '%$searchTerm%' 
+                                OR pc_status LIKE '%$searchTerm%' 
+                                OR created_at LIKE '%$searchTerm%' 
+                                OR updated_at LIKE '%$searchTerm%'";
 
                     if (strtolower($searchTerm) === 'Active' || strtolower($searchTerm) === 'Inactive') {
                         $query .= " OR pc_status = '$searchTerm'";
                     }
+
+                    $query .= " ORDER BY updated_at DESC";
+                } else {
+                    $query = "SELECT * FROM photocard_library ORDER BY updated_at DESC";
                 }
 
                 $result = mysqli_query($conn, $query);
                 $i = 1;
+
 
                 // If there are results, loop through and display them
                 if (mysqli_num_rows($result) > 0) {
@@ -122,6 +125,7 @@ $membersResult = mysqli_query($conn, $membersQuery);
                                     data-pc_title='{$row['pc_title']}'
                                     data-pc_status ='{$row['pc_status']}'
                                     data-created_at='{$row['created_at']}'
+                                    data-updated_at='{$row['updated_at']}'
                                     title='View Photocards'>
                                     <i class='fa-solid fa-expand'></i>
                                 </button>
@@ -168,6 +172,7 @@ $membersResult = mysqli_query($conn, $membersQuery);
                         <p><strong>PC Title:</strong> <span id="modal-pc_title"></span></p>
                         <p><strong>PC Status:</strong> <span id="modal-pc_status"></span></p>
                         <p><strong>Created At:</strong> <span id="modal-created_at"></span></p>
+                        <p><strong>Updated At:</strong> <span id="modal-updated_at"></span></p>
                     </div>
                 </div>
             </div>
@@ -190,7 +195,6 @@ $membersResult = mysqli_query($conn, $membersQuery);
                             <input type="hidden" name="pc_id" id="edit-pc_id" value="">
                             <input type="hidden" name="current_pc_filepath" id="current_pc_filepath" value="">
 
-
                             <!-- Show current photocard image -->
                             <div class="d-flex justify-content-center mb-3">
                                 <img id="edit-pc_image_preview" src="" alt="Photocard Image" class="img-fluid rounded"
@@ -209,7 +213,8 @@ $membersResult = mysqli_query($conn, $membersQuery);
                             <!-- Member's Name Select -->
                             <div class="mb-3">
                                 <label for="edit-member_name" class="form-label"><strong>Member's Name</strong></label>
-                                <select class="form-select" id="edit-member_name" name="member_name" onchange="toggleOtherInput()" required>
+                                <select class="form-select" id="edit-member_name" name="member_name"
+                                    onchange="toggleOtherInput()" required>
                                     <option value="" disabled selected>Choose NCT member...</option>
                                     <?php
                                     if ($membersResult && mysqli_num_rows($membersResult) > 0) {
@@ -296,9 +301,10 @@ $membersResult = mysqli_query($conn, $membersQuery);
         </script>";
         unset($_SESSION['swal']);
     }
-    ?> 
+    ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script><script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
@@ -309,7 +315,7 @@ $membersResult = mysqli_query($conn, $membersQuery);
 
             sidebarToggle.addEventListener('click', function () {
                 const sidebar = new bootstrap.Offcanvas(document.getElementById('offcanvasWithBothOptions'));
-                sidebar.show(); 
+                sidebar.show();
             });
 
         });
@@ -326,7 +332,6 @@ $membersResult = mysqli_query($conn, $membersQuery);
                     const pcType = this.getAttribute('data-pc_type');
                     const pcTitle = this.getAttribute('data-pc_title');
                     const pcStatus = this.getAttribute('data-pc_status');
-                    const createdAt = this.getAttribute('data-created_at');
 
                     // Populate input fields
                     document.getElementById('edit-pc_id').value = pcId;
@@ -336,13 +341,18 @@ $membersResult = mysqli_query($conn, $membersQuery);
                     document.getElementById('edit-subunit').value = subunit;
                     document.getElementById('edit-pc_type').value = pcType;
                     document.getElementById('edit-pc_status').value = pcStatus;
-                    document.getElementById('edit-created_at').value = createdAt;
-                    document.getElementById('edit-updated_at').value = updatedAt;
 
+                    // Show the photocard image
+                    const imgElement = document.getElementById('edit-pc_image_preview');
+                    if (pcFilePath) {
+                        imgElement.src = "../../" + pcFilePath;
+                        imgElement.style.display = 'block';
+                    } else {
+                        imgElement.style.display = 'none';
+                    }
                 });
             });
         });
-
 
         document.querySelectorAll('.edit-pc-btn').forEach(button => {
             button.addEventListener('click', function () {
@@ -353,36 +363,36 @@ $membersResult = mysqli_query($conn, $membersQuery);
 
         //VIEW Modal
         document.addEventListener('DOMContentLoaded', function () {
-        const viewButtons = document.querySelectorAll('.view-pc-btn');
+            const viewButtons = document.querySelectorAll('.view-pc-btn');
 
-        viewButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const memberName = this.getAttribute('data-member_name');
-                const pcFilepath = this.getAttribute('data-pc_filepath');
-                const subunit = this.getAttribute('data-subunit');
-                const pcType = this.getAttribute('data-pc_type');
-                const pcTitle = this.getAttribute('data-pc_title');
-                const pcStatus = this.getAttribute('data-pc_status');
-                const createdAt = this.getAttribute('data-created_at');
-                const updatedAt = this.getAttribute('data-updated_at');
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const memberName = this.getAttribute('data-member_name');
+                    const pcFilepath = this.getAttribute('data-pc_filepath');
+                    const subunit = this.getAttribute('data-subunit');
+                    const pcType = this.getAttribute('data-pc_type');
+                    const pcTitle = this.getAttribute('data-pc_title');
+                    const pcStatus = this.getAttribute('data-pc_status');
+                    const createdAt = this.getAttribute('data-created_at');
+                    const updatedAt = this.getAttribute('data-updated_at');
 
-                // Set the modal content
-                document.getElementById('modal-member_name-title').textContent = memberName;
-                document.getElementById('modal-subunit').textContent = subunit;
-                document.getElementById('modal-pc_type').textContent = pcType;
-                document.getElementById('modal-pc_title').textContent = pcTitle;
-                document.getElementById('modal-pc_status').textContent = pcStatus;
-                document.getElementById('modal-created_at').textContent = createdAt;
-                document.getElementById('modal-updated_at').textContent = updatedAt;
+                    // Set the modal content
+                    document.getElementById('modal-member_name-title').textContent = memberName;
+                    document.getElementById('modal-subunit').textContent = subunit;
+                    document.getElementById('modal-pc_type').textContent = pcType;
+                    document.getElementById('modal-pc_title').textContent = pcTitle;
+                    document.getElementById('modal-pc_status').textContent = pcStatus;
+                    document.getElementById('modal-created_at').textContent = createdAt;
+                    document.getElementById('modal-updated_at').textContent = updatedAt;
 
-                // Update the image preview if the file path exists
-                const imageElement = document.getElementById('modal-pc_image');
-                if (pcFilepath) {
-                imageElement.src = `../../${pcFilepath}`;
-                    imageElement.style.display = 'block'; // Ensure image is shown
-                } else {
-                    imageElement.style.display = 'none'; // Hide image if there's no path
-                }
+                    // Update the image preview if the file path exists
+                    const imageElement = document.getElementById('modal-pc_image');
+                    if (pcFilepath) {
+                        imageElement.src = `../../${pcFilepath}`;
+                        imageElement.style.display = 'block'; // Ensure image is shown
+                    } else {
+                        imageElement.style.display = 'none'; // Hide image if there's no path
+                    }
                 });
             });
         });
