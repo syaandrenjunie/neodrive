@@ -128,12 +128,13 @@ check_role('admin');
                                 </button>
 
                                 <a href='#'
-                                    class='btn btn-sm " . ($row['member_status'] === 'Active' ? 'btn-warning' : 'btn-success') . " member-toggle'
-                                    data-url='../member/a-deactivate-member.php?id=" . $row['member_id'] . "'
-                                    data-action='" . ($row['member_status'] === 'Active' ? 'deactivate' : 'activate') . "'
-                                    title='" . ($row['member_status'] === 'Active' ? 'Deactivate' : 'Activate') . " Member'>
-                                    <i class='fa-solid " . (strtolower($row['member_status']) === 'active' ? 'fa-user-slash' : 'fa-user-check') . "'></i>
-                                </a>
+    class='btn btn-sm " . ($row['member_status'] === 'Active' ? 'btn-warning' : 'btn-success') . " confirm-toggle-status member-toggle'
+    data-url='../member/a-deactivate-member.php?id=" . $row['member_id'] . "'
+    data-action='" . ($row['member_status'] === 'Active' ? 'deactivate' : 'activate') . "'
+    title='" . ($row['member_status'] === 'Active' ? 'Deactivate' : 'Activate') . " Member'>
+    <i class='fa-solid " . (strtolower($row['member_status']) === 'active' ? 'fa-user-slash' : 'fa-user-check') . "'></i>
+</a>
+
 
                                                               
                             </td>
@@ -365,6 +366,40 @@ check_role('admin');
         .modal-lg {
             max-width: 60%;
         }
+
+        .btn-primary.view-member-btn {
+            background-color: rgb(217, 233, 71) !important;
+            border-color: rgb(217, 233, 71) !important;
+            color: white !important;
+        }
+
+        .btn-primary.view-pc-member:hover {
+            background-color: rgb(240, 226, 40) !important;
+            border-color: rgb(240, 226, 40) !important;
+        }
+
+        .btn-warning.edit-member-btn {
+            background-color: rgb(245, 101, 120) !important;
+            border-color: rgb(241, 141, 154) !important;
+            color: white !important;
+        }
+
+        .btn-warning.edit-member-btn:hover {
+            background-color: rgb(231, 66, 88) !important;
+            border-color: rgb(231, 66, 88) !important;
+            color: white !important;
+        }
+
+	.btn-warning.confirm-toggle-status {
+                background-color: rgb(172, 236, 134) !important;
+                border-color: rgb(172, 236, 134) !important;
+                color: white !important;
+            }
+
+            .btn-success.confirm-toggle-status {
+                background-color: rgb(231, 69, 69) !important;
+                border-color: rgb(231, 69, 69) !important;
+            }
     </style>
 </body>
 </html>

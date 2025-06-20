@@ -1,11 +1,7 @@
 <?php
-include("../../include/auth.php"); // Include the authentication file
-
-// Check if the user is an admin
+include("../../include/auth.php"); 
 check_role('admin');
-
-
-include("../../database/dbconn.php"); 
+include("../../database/dbconn.php");
 
 ?>
 <!DOCTYPE html>
@@ -37,9 +33,7 @@ include("../../database/dbconn.php");
         </div>
     </header><br><br>
 
-    <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>
-
 
     <div class="mnotes-list">
         <div class="search-container">
@@ -80,8 +74,8 @@ include("../../database/dbconn.php");
                 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 
                 // If there is no search term, it will just show all users.
-                $query = "SELECT * FROM mindful_notes" ;
-                
+                $query = "SELECT * FROM mindful_notes";
+
                 if (!empty($searchTerm)) {
                     $query .= " WHERE m_notes LIKE '%$searchTerm%' 
                                OR mood_type LIKE '%$searchTerm%' 
@@ -216,14 +210,35 @@ include("../../database/dbconn.php");
             </div>
         </div>
 
-
-
-        <!-- Bootstrap JS (with Popper) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <!-- Custom JavaScript for Sidebar Toggle -->
         <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const urlParams = new URLSearchParams(window.location.search);
 
+                if (urlParams.get("success") === "1") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Mindful Note Added!',
+                        text: 'Your new note has been successfully saved.',
+                        confirmButtonColor: '#7ec857'
+                    });
+                    // Remove ?success=1 from the URL after showing
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+
+                if (urlParams.get("error") === "1") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong. Please try again.',
+                        confirmButtonColor: '#d33'
+                    });
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            });
+        
             document.addEventListener('DOMContentLoaded', function () {
 
                 document.querySelectorAll('.edit-notes-btn').forEach(button => {
@@ -265,18 +280,38 @@ include("../../database/dbconn.php");
                 margin-bottom: 10px;
                 display: flex;
                 justify-content: flex-start;
-                /* Align to the left */
             }
 
             .search-form {
                 width: 800px;
                 max-width: 600px;
-                /* Adjust width as needed */
             }
 
             .modal-lg {
-                max-width: 60%;
-                /* Adjust the width as needed */
+                max-width: 45%;
+            }
+
+            .btn-primary.view-notes-btn {
+                background-color: rgb(217, 233, 71) !important;
+                border-color: rgb(217, 233, 71) !important;
+                color: white !important;
+            }
+
+            .btn-primary.view-pc-notes:hover {
+                background-color: rgb(240, 226, 40) !important;
+                border-color: rgb(240, 226, 40) !important;
+            }
+
+            .btn-warning.edit-notes-btn {
+                background-color: rgb(245, 101, 120) !important;
+                border-color: rgb(241, 141, 154) !important;
+                color: white !important;
+            }
+
+            .btn-warning.edit-notes-btn:hover {
+                background-color: rgb(231, 66, 88) !important;
+                border-color: rgb(231, 66, 88) !important;
+                color: white !important;
             }
         </style>
 </body>

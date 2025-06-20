@@ -197,6 +197,17 @@ check_role('admin');
         .modal-lg {
             max-width: 60%;
         }
+
+        .btn-primary.view-pc-btn {
+            background-color:rgb(217, 233, 71) !important;
+            border-color: rgb(217, 233, 71)  !important;
+            color: white !important;
+        }
+
+        .btn-primary.view-pc-btn:hover {
+            background-color:rgb(240, 226, 40) !important;
+            border-color: rgb(240, 226, 40)  !important;
+        }
     </style>
 </body>
 </ht>

@@ -224,6 +224,30 @@ check_role('admin');
         .modal-lg {
             max-width: 100%;
         }
+
+        .btn-warning.update-status-btn {
+            background-color: rgb(217, 233, 71) !important;
+            border-color: rgb(217, 233, 71) !important;
+            color: white !important;
+        }
+
+        .btn-btn-warning.update-status-btnhover {
+            background-color: rgb(240, 226, 40) !important;
+            border-color: rgb(240, 226, 40) !important;
+        }
+
+        .btn-danger {
+            background-color: rgb(245, 101, 120) !important;
+            border-color: rgb(241, 141, 154) !important;
+            color: white !important;
+        }
+
+        .btn-danger:hover {
+            background-color: rgb(231, 66, 88) !important;
+            border-color: rgb(231, 66, 88) !important;
+            color: white !important;
+        }
+
     </style>
 </body>
 

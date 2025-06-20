@@ -272,8 +272,8 @@ check_role('admin');
 
                             <!-- Modal Footer -->
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Update Quote</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn custom-save-btn">Save Changes</button>
                             </div>
 
                         </form>
@@ -344,18 +344,52 @@ check_role('admin');
             margin-bottom: 10px;
             display: flex;
             justify-content: flex-start;
-            /* Align to the left */
         }
 
         .search-form {
             width: 800px;
             max-width: 600px;
-            /* Adjust width as needed */
         }
 
         .modal-lg {
-            max-width: 60%;
-            /* Adjust the width as needed */
+            max-width: 45%;
+        }
+
+        .btn-primary.view-quote-btn {
+            background-color:rgb(217, 233, 71) !important;
+            border-color: rgb(217, 233, 71)  !important;
+            color: white !important;
+        }
+
+        .btn-primary.view-quote-btn:hover {
+            background-color:rgb(240, 226, 40) !important;
+            border-color: rgb(240, 226, 40)  !important;
+        }
+
+        .btn-warning.edit-quote-btn {
+            background-color: rgb(245, 101, 120) !important;
+            border-color: rgb(241, 141, 154) !important;
+            color: white !important;
+        }
+
+        .btn-warning.edit-quote-btn:hover {
+            background-color: rgb(231, 66, 88) !important;
+            border-color: rgb(231, 66, 88) !important;
+            color: white !important;
+        }
+
+        .custom-save-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-save-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
         }
     </style>
 </body>

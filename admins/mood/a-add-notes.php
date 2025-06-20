@@ -1,7 +1,6 @@
 <?php
-include("../../include/auth.php"); // Include the authentication file
+include("../../include/auth.php"); 
 
-// Check if the user is an admin
 check_role('admin');
 
 ?>
@@ -16,6 +15,8 @@ check_role('admin');
     <link rel="stylesheet" href="../../css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
@@ -23,7 +24,8 @@ check_role('admin');
         <div class="logo-title-container">
             <img src="../../assets/image/clock.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-            <a class="link-underline link-underline-opacity-0" href="../maindb/admin-moods-page.php">New Mindful Notes</a>
+            <a class="link-underline link-underline-opacity-0" href="../maindb/admin-moods-page.php">New Mindful
+                Notes</a>
         </div>
         <div class="header-buttons">
             <a class="link-underline link-underline-opacity-0" href="../maindb/admin-moods-page.php">List</a>
@@ -43,7 +45,7 @@ check_role('admin');
 
     <div class="container mt-2">
         <div class="new-user-container">
-            <h3 class="mb-4">Create New Mindful Notes</h3><br>
+            <h3 class="mb-4" style="color:rgb(142, 196, 92);">Create New Mindful Notes</h3><br>
 
             <form class="row g-3 needs-validation" action="a-confirm-notes.php" method="POST" novalidate
                 enctype="multipart/form-data">
@@ -52,7 +54,8 @@ check_role('admin');
                 <div class="row mb-3">
                     <label for="inputNotes3" class="col-sm-2 col-form-label">Mindful Notes</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="exampleFormControlTextarea1" name="m_notes" rows="3"></textarea>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" name="m_notes"
+                            rows="3"></textarea>
                     </div>
                 </div>
 
@@ -94,7 +97,7 @@ check_role('admin');
 
                 <!-- Submit Button -->
                 <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn custom-save-btn">Add New</button>
                 </div>
             </form>
 
@@ -102,7 +105,8 @@ check_role('admin');
     </div>
 
 
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -114,11 +118,13 @@ check_role('admin');
                     sidebar.show();
                 });
             }
+
+
     </script>
 
     <style>
         .container {
-            max-width: 1000px;
+            max-width: 700px;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -141,8 +147,6 @@ check_role('admin');
             border-radius: 5px;
             background-color: #f0f0f0;
         }
-
-
 
         .form-check-input {
             margin-left: 10px;
@@ -168,7 +172,15 @@ check_role('admin');
         label {
             font-size: 16px;
         }
-        
+
+        .custom-save-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
     </style>
 
 </body>

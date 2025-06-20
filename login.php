@@ -184,21 +184,8 @@ $conn->close();
             transform: translateX(-50%);
         }
 
-         body::before {
-    content: "";
-    position: fixed; /* use fixed to keep it from scrolling */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("assets/image/space.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    opacity: 80%; /* adjust this value to control transparency */
-    z-index: -1; /* puts it behind all content */
-  }
+        
+  
     </style>
     <script>
         function showSignup() {

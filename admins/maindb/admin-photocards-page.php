@@ -275,8 +275,9 @@ $membersResult = mysqli_query($conn, $membersQuery);
 
                             <!-- Modal Footer -->
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-success">Save Changes</button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn custom-save-btn">Save Changes</button>
+
                             </div>
 
                         </form>
@@ -448,6 +449,43 @@ $membersResult = mysqli_query($conn, $membersQuery);
 
         .modal-lg {
             max-width: 50%;
+        }
+
+        .btn-primary.view-pc-btn {
+            background-color: rgb(217, 233, 71) !important;
+            border-color: rgb(217, 233, 71) !important;
+            color: white !important;
+        }
+
+        .btn-primary.view-pc-btn:hover {
+            background-color: rgb(240, 226, 40) !important;
+            border-color: rgb(240, 226, 40) !important;
+        }
+
+        .btn-warning.edit-pc-btn {
+            background-color: rgb(245, 101, 120) !important;
+            border-color: rgb(241, 141, 154) !important;
+            color: white !important;
+        }
+
+        .btn-warning.edit-pc-btn:hover {
+            background-color: rgb(231, 66, 88) !important;
+            border-color: rgb(231, 66, 88) !important;
+            color: white !important;
+        }
+
+        .custom-save-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-save-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
         }
     </style>
 </body>

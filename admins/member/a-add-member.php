@@ -30,9 +30,9 @@ check_role('admin');
         <div class="header-buttons">
 
             <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="#">List</a>
+     link-underline-opacity-75-hover" href="../maindb/admin-member-page.php">List</a>
             <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-     link-underline-opacity-75-hover" href="../member/a-add-member.php">New</a>
+     link-underline-opacity-75-hover" href="#">New</a>
             <a href="../maindb/adminprofile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
@@ -56,7 +56,7 @@ check_role('admin');
 
     <div class="container mt-2">
         <div class="new-user-container">
-            <h3 class="mb-4">Create New Member</h3><br>
+            <h4 class="mb-4" style="color:rgb(142, 196, 92);">Add New Member</h4>
 
             <form class="row g-3 needs-validation" action="a-confirm-member.php" method="POST" novalidate
                 enctype="multipart/form-data">
@@ -114,7 +114,7 @@ check_role('admin');
 
                 <!-- Submit Button -->
                 <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+<button type="submit" class="btn custom-save-btn">Add New</button>
                 </div>
             </form>
 
@@ -224,6 +224,21 @@ document.querySelector('form').addEventListener('submit', function(e) {
         label {
             font-size: 16px;
         }
+
+        .custom-save-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-save-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
+        }
+
     </style>
 </body>
 

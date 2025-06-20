@@ -52,7 +52,7 @@ if ($result) {
 
     <div class="container mt-2">
         <div class="new-user-container">
-<h3 class="mb-4" style="color:rgb(142, 196, 92);">Add New Photocards</h3><br>
+            <h3 class="mb-4" style="color:rgb(142, 196, 92);">Add New Photocards</h3><br>
 
             <form class="row g-3 needs-validation" action="a-confirm-pc.php" method="POST" novalidate
                 enctype="multipart/form-data">

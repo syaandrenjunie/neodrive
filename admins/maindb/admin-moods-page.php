@@ -1,7 +1,6 @@
 <?php
-include("../../include/auth.php"); // Include the authentication file
+include("../../include/auth.php"); 
 
-// Check if the user is an admin
 check_role('admin');
 
 ?>
@@ -30,7 +29,7 @@ check_role('admin');
         <div class="header-buttons">
             <a class="link-underline link-underline-opacity-0" href="#">Lists</a>
             <a class="link-underline link-underline-opacity-0" href="../mood/a-list-notes.php">Notes</a>
-                        <a class="link-underline link-underline-opacity-0" href="../mood/a-add-notes.php">New</a>
+            <a class="link-underline link-underline-opacity-0" href="../mood/a-add-notes.php">New</a>
 
 
             <a href="adminprofile.php" class="profile-icon">
@@ -235,23 +234,17 @@ check_role('admin');
         </div>
 
         <?php if (isset($_GET['status_changed']) && $_GET['status_changed'] === 'success'): ?>
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Status Updated',
-        text: 'Mood Check-In status has been updated successfully.',
-        confirmButtonColor: '#3085d6'
-    });
-</script>
-<?php endif; ?>
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Status Updated',
+                    text: 'Mood Check-In status has been updated successfully.',
+                    confirmButtonColor: '#3085d6'
+                });
+            </script>
+        <?php endif; ?>
 
-
-
-        <!-- Bootstrap JS (with Popper) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
         <script>
             // Get the image element that will trigger the sidebar
             const sidebarToggle = document.getElementById('sidebarToggle');
@@ -281,50 +274,66 @@ check_role('admin');
             });
 
             document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.confirm-toggle-status').forEach(button => {
-        button.addEventListener('click', function () {
-            const moodId = this.getAttribute('data-id');
-            const currentStatus = this.getAttribute('data-status');
-            const actionText = currentStatus === 'Active' ? 'deactivate' : 'activate';
+                document.querySelectorAll('.confirm-toggle-status').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const moodId = this.getAttribute('data-id');
+                        const currentStatus = this.getAttribute('data-status');
+                        const actionText = currentStatus === 'Active' ? 'deactivate' : 'activate';
 
-            Swal.fire({
-                title: `Are you sure you want to ${actionText}?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: `Yes, ${actionText} it!`
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = `../mood/a-deactivate-mood.php?id=${moodId}`;
-                }
+                        Swal.fire({
+                            title: `Are you sure you want to ${actionText}?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: `Yes, ${actionText} it!`
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = `../mood/a-deactivate-mood.php?id=${moodId}`;
+                            }
+                        });
+                    });
+                });
             });
-        });
-    });
-});
 
         </script>
-
-
-
 
         <style>
             .search-container {
                 margin-bottom: 10px;
                 display: flex;
                 justify-content: flex-start;
-                /* Align to the left */
             }
 
             .search-form {
                 width: 800px;
                 max-width: 600px;
-                /* Adjust width as needed */
             }
 
             .modal-lg {
-                max-width: 60%;
-                /* Adjust the width as needed */
+                max-width: 45%;
+            }
+
+            .btn-primary.view-moods-btn {
+                background-color: rgb(217, 233, 71) !important;
+                border-color: rgb(217, 233, 71) !important;
+                color: white !important;
+            }
+
+            .btn-primary.view-moods-btn:hover {
+                background-color: rgb(240, 226, 40) !important;
+                border-color: rgb(240, 226, 40) !important;
+            }
+
+            .btn-warning.confirm-toggle-status {
+                background-color: rgb(245, 101, 120) !important;
+                border-color: rgb(241, 141, 154) !important;
+                color: white !important;
+            }
+
+            .btn-success.confirm-toggle-status {
+                background-color: rgb(211, 40, 77) !important;
+                border-color: rgb(211, 40, 77) !important;
             }
         </style>
 </body>

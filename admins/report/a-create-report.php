@@ -41,7 +41,8 @@ check_role('admin');
     <!-- Report Form as Container -->
     <div class="container mt-4 mb-5">
         <div class="card shadow p-4 mx-auto" style="max-width: 800px;">
-            <h4 class="mb-4">Generate Report</h4>
+            <h4 class="mb-4" style="color:rgb(142, 196, 92);">Generate Report</h4>
+
             <form action="a-confirm-report.php" method="POST">
                 <div class="mb-3">
                     <label class="form-label">Select Report Type:</label>
@@ -92,7 +93,8 @@ check_role('admin');
                 <input type="hidden" name="admin_id" value="<?= $_SESSION['user_id'] ?>">
 
                 <div class="text-end">
-                    <button type="submit" name="generate_report" class="btn btn-success">Generate PDF</button>
+                    <button type="submit" name="generate_report" class="btn custom-save-btn">Generate PDF</button>
+
                 </div>
             </form>
         </div>
@@ -134,6 +136,21 @@ check_role('admin');
 
         
     </script>
+    <style>
+        .custom-save-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-save-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
+        }
+    </style>
 </body>
 
 </html>

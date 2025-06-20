@@ -63,7 +63,7 @@ include '../../database/dbconn.php';
                     <th>Bias</th>
                     <th>Status</th>
                     <th>Created At</th>
-                    <th>Actions Babe</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -226,6 +226,28 @@ include '../../database/dbconn.php';
         .search-form {
             width: 800px;
             max-width: 600px;
+        }
+
+        .btn-primary.view-user-btn {
+            background-color:rgb(217, 233, 71) !important;
+            border-color: rgb(217, 233, 71)  !important;
+            color: white !important;
+        }
+
+        .btn-primary.view-user-btn:hover {
+            background-color:rgb(240, 226, 40) !important;
+            border-color: rgb(240, 226, 40)  !important;
+        }
+
+        .btn-warning.view-status-btn {
+            background-color: rgb(245, 101, 120) !important;
+            border-color: rgb(241, 141, 154) !important;
+            color: white !important;
+        }
+
+        .btn-success.view-status-btn {
+            background-color: rgb(211, 40, 77) !important;
+            border-color: rgb(211, 40, 77) !important;
         }
     </style>
 

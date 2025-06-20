@@ -65,7 +65,7 @@ if ($result) {
     <div class="logo-title-container">
       <img src="../../assets/image/clock.png" alt="Logo">
       <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 
-            link-underline-opacity-75-hover" href="#">Your Profile</a>
+            link-underline-opacity-75-hover" href="admindashboard.php">Your Profile</a>
     </div>
     <div class="header-buttons">
         <div class="dropdown">
@@ -81,6 +81,8 @@ if ($result) {
 
     </div>
   </header><br>
+    
+  <?php include('../menus-sidebar.php'); ?>
 
   <?php if (isset($_SESSION['success_message'])): ?>
     <script>
@@ -261,7 +263,16 @@ if ($result) {
       tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
       });
+      
     });
+
+    const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function () {
+                const sidebar = new bootstrap.Offcanvas(document.getElementById('offcanvasWithBothOptions'));
+                sidebar.show();
+            });
+        }
 
     
     

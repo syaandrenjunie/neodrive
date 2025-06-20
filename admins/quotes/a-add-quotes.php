@@ -23,6 +23,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,12 +54,9 @@ while ($row = mysqli_fetch_assoc($result)) {
     <!-- Include Sidebar -->
     <?php include('../menus-sidebar.php'); ?>
 
-
-    
-
-    <div class="container mt-2">
+<div class="container-sm mt-2">
         <div class="new-user-container">
-            <h3 class="mb-4">Create New Quotes</h3><br>
+            <h3 class="mb-4" style="color:rgb(142, 196, 92);">Add New Quotes</h3><br>
 
             <form class="row g-3 needs-validation" action="a-confirm-quotes.php" method="POST" novalidate
                 enctype="multipart/form-data">
@@ -67,7 +65,8 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <div class="row mb-3">
                     <label for="inputQuotes3" class="col-sm-2 col-form-label">Quotes Text</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="exampleFormControlTextarea1" name="quotes_text" rows="3"></textarea>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" name="quotes_text"
+                            rows="3"></textarea>
                     </div>
                 </div>
 
@@ -87,52 +86,56 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </div>
 
                 <!-- Figure's Type Radio -->
-<fieldset class="row mb-3">
-    <legend class="col-form-label col-sm-2 pt-0">Figure's Type</legend>
-    <div class="col-sm-10">
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="figure_type" value="NCT" id="typeNCT" checked onchange="toggleMemberSelect()">
-            <label class="form-check-label" for="typeNCT">NCT</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="figure_type" value="Other" id="typeOther" onchange="toggleMemberSelect()">
-            <label class="form-check-label" for="typeOther">Other</label>
-        </div>
-    </div>
-</fieldset>
+                <fieldset class="row mb-3">
+                    <legend class="col-form-label col-sm-2 pt-0">Figure's Type</legend>
+                    <div class="col-sm-10">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="figure_type" value="NCT" id="typeNCT"
+                                checked onchange="toggleMemberSelect()">
+                            <label class="form-check-label" for="typeNCT">NCT</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="figure_type" value="Other" id="typeOther"
+                                onchange="toggleMemberSelect()">
+                            <label class="form-check-label" for="typeOther">Other</label>
+                        </div>
+                    </div>
+                </fieldset>
 
-<!-- NCT Member Dropdown -->
-<div class="row mb-3 member-select" id="nctSelectBox">
-    <label class="col-sm-2 col-form-label">NCT Member</label>
-    <div class="col-sm-10">
-        <select class="form-select" name="nct_member_id">
-    <option selected disabled>Choose NCT member...</option>
-    <?php foreach ($nct_members as $member): ?>
-        <option value="<?= htmlspecialchars($member['id']) ?>"><?= htmlspecialchars($member['name']) ?></option>
-    <?php endforeach; ?>
-</select>
+                <!-- NCT Member Dropdown -->
+                <div class="row mb-3 member-select" id="nctSelectBox">
+                    <label class="col-sm-2 col-form-label">NCT Member</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" name="nct_member_id">
+                            <option selected disabled>Choose NCT member...</option>
+                            <?php foreach ($nct_members as $member): ?>
+                                <option value="<?= htmlspecialchars($member['id']) ?>">
+                                    <?= htmlspecialchars($member['name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
 
-    </div>
-</div>
+                    </div>
+                </div>
 
-<!-- Other Member Dropdown -->
-<div class="row mb-3 member-select" id="otherSelectBox" style="display: none;">
-    <label class="col-sm-2 col-form-label">Other Figure</label>
-    <div class="col-sm-10">
-        <select class="form-select" name="other_member_id">
-    <option selected disabled>Choose Other figure...</option>
-    <?php foreach ($other_members as $member): ?>
-        <option value="<?= htmlspecialchars($member['id']) ?>"><?= htmlspecialchars($member['name']) ?></option>
-    <?php endforeach; ?>
-</select>
+                <!-- Other Member Dropdown -->
+                <div class="row mb-3 member-select" id="otherSelectBox" style="display: none;">
+                    <label class="col-sm-2 col-form-label">Other Figure</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" name="other_member_id">
+                            <option selected disabled>Choose Other figure...</option>
+                            <?php foreach ($other_members as $member): ?>
+                                <option value="<?= htmlspecialchars($member['id']) ?>">
+                                    <?= htmlspecialchars($member['name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
 
-    </div>
-</div>
+                    </div>
+                </div>
 
 
                 <!-- Submit Button -->
                 <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn custom-add-btn">Add New</button>
                 </div>
             </form>
 
@@ -146,22 +149,22 @@ while ($row = mysqli_fetch_assoc($result)) {
     <!-- Custom JavaScript for Sidebar Toggle -->
     <script>
         function toggleMemberSelect() {
-        const nctBox = document.getElementById('nctSelectBox');
-        const otherBox = document.getElementById('otherSelectBox');
-        const figureType = document.querySelector('input[name="figure_type"]:checked').value;
+            const nctBox = document.getElementById('nctSelectBox');
+            const otherBox = document.getElementById('otherSelectBox');
+            const figureType = document.querySelector('input[name="figure_type"]:checked').value;
 
-        if (figureType === 'NCT') {
-            nctBox.style.display = 'flex';
-            otherBox.style.display = 'none';
-        } else {
-            nctBox.style.display = 'none';
-            otherBox.style.display = 'flex';
+            if (figureType === 'NCT') {
+                nctBox.style.display = 'flex';
+                otherBox.style.display = 'none';
+            } else {
+                nctBox.style.display = 'none';
+                otherBox.style.display = 'flex';
+            }
         }
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        toggleMemberSelect(); // Ensure initial state
-    });
+        document.addEventListener("DOMContentLoaded", function () {
+            toggleMemberSelect(); // Ensure initial state
+        });
 
         document.addEventListener('DOMContentLoaded', function () {
             const sidebarToggle = document.getElementById('sidebarToggle');
@@ -189,38 +192,38 @@ while ($row = mysqli_fetch_assoc($result)) {
                     });
             })();
         });
-    
-    document.addEventListener('DOMContentLoaded', function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        const status = urlParams.get('status');
 
-        if (status === 'success') {
-            Swal.fire({
-                title: 'Success!',
-                text: 'Quote added successfully!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.history.replaceState({}, document.title, "a-add-quotes.php");
-            });
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
 
-        if (status === 'error') {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Failed to add quote.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.history.replaceState({}, document.title, "a-add-quotes.php");
-            });
-        }
-    });
-</script>
+            if (status === 'success') {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Quote added successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, "a-add-quotes.php");
+                });
+            }
+
+            if (status === 'error') {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to add quote.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, "a-add-quotes.php");
+                });
+            }
+        });
+    </script>
 
     <style>
-        .container {
-            max-width: 1000px;
+        .container-sm {
+            max-width: 800px;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -270,7 +273,20 @@ while ($row = mysqli_fetch_assoc($result)) {
         label {
             font-size: 16px;
         }
-        
+
+        .custom-add-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-add-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
+        }
     </style>
 </body>
 

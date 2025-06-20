@@ -7,7 +7,6 @@ if (!isset($_SESSION['user_id'])) {
   exit();
 }
 
-// Retrieve the user ID from the session
 $user_id = $_SESSION['user_id'];
 
 // Fetch user data
@@ -180,11 +179,10 @@ if ($result) {
                 </select>
               </div>
 
-              <div class="mb-3">
+              <!-- <div class="mb-3">
                 <label for="profilePic" class="form-label text-success"><strong>Profile Picture</strong></label>
                 <input type="file" class="form-control" name="profilePic" accept="image/*">
-
-              </div>
+              </div> -->
 
           </div>
           <div class="modal-footer">
@@ -197,7 +195,8 @@ if ($result) {
     </div>
 
     <div class="col-md-4">
-      <div class="session-history rounded p-4" style="background-color: rgb(215, 252, 194); color: #333; box-shadow: 0 10px 30px rgb(169, 255, 158);">
+      <div class="session-history rounded p-4"
+        style="background-color: rgb(215, 252, 194); color: #333; box-shadow: 0 10px 30px rgb(169, 255, 158);">
         <h5 class="text-center mb-4 fw-bold text-dark">
           <i class="bi bi-hourglass-bottom me-2"></i>Completed Sessions
         </h5>
@@ -224,7 +223,8 @@ if ($result) {
 
 
     <div class="col-md-4">
-      <div class="todo-history rounded p-4" style=" background-color: rgb(215, 252, 194); color: #333; box-shadow: 0 10px 30px rgb(169, 255, 158);">
+      <div class="todo-history rounded p-4"
+        style=" background-color: rgb(215, 252, 194); color: #333; box-shadow: 0 10px 30px rgb(169, 255, 158);">
         <h5 class="text-center mb-4 fw-bold text-dark">
           <i class="bi bi-check-circle-fill me-2"></i>Completed Tasks
         </h5>
@@ -318,7 +318,7 @@ if ($result) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
       });
     });
-    
+
   </script>
 
   <style>
@@ -449,14 +449,14 @@ if ($result) {
       justify-content: center;
       cursor: pointer;
       z-index: 1000;
-      
+
     }
 
     .chat-icon:hover {
       background-color: rgb(250, 170, 190);
       transform: scale(1.15);
       transition: transform 0.3s ease, background-color 0.3s ease;
-      
+
     }
 
     .icon-inner {
