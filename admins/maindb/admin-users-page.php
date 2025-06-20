@@ -63,7 +63,7 @@ include '../../database/dbconn.php';
                     <th>Bias</th>
                     <th>Status</th>
                     <th>Created At</th>
-                    <th>Action</th>
+                    <th>Actions Babe</th>
                 </tr>
             </thead>
             <tbody>
