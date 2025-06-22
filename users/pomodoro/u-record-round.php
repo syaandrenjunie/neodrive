@@ -59,7 +59,7 @@ if ($round > $current_completed) {
     if ($round >= $total_rounds) {
         // Get a random active photocard the user DOES NOT own yet
         $pcQuery = $conn->prepare("
-            SELECT pc_id, pc_filepath, pc_title 
+            SELECT pc_id, pc_filepath, pc_title, member_name 
             FROM photocard_library 
             WHERE pc_status = 'active' 
             AND pc_id NOT IN (
@@ -87,7 +87,14 @@ if ($round > $current_completed) {
             // Output the photocard as image
             $img_src = '../../' . $pcRow['pc_filepath'];
 
-            echo "<img src='" . htmlspecialchars($img_src) . "' alt='" . htmlspecialchars($pcRow['pc_title']) . "' style='max-width:60%; border-radius:8px;'>";
+            echo "<div 
+        data-member='" . htmlspecialchars($pcRow['member_name']) . "'
+        style='text-align:center;'
+    >
+        <img src='" . htmlspecialchars($img_src) . "' 
+             alt='" . htmlspecialchars($pcRow['pc_title']) . "' 
+             style='max-width:60%; border-radius:8px;'>
+    </div>";
 
         } else {
             echo "No new photocard available to reward.";

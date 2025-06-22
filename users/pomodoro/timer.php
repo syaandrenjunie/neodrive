@@ -6,9 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../../login.php");
     exit();
 }
-
 $user_id = $_SESSION['user_id'];
-
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +20,6 @@ $user_id = $_SESSION['user_id'];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 </head>
 
 <body>
@@ -43,7 +40,6 @@ $user_id = $_SESSION['user_id'];
             <a href="../profile/profile.php" class="profile-icon">
                 <i class="fa-solid fa-user-circle"></i>
             </a>
-
         </div>
 
     </header><br>
@@ -186,7 +182,6 @@ $user_id = $_SESSION['user_id'];
                 const sessionId = <?= isset($_GET['session_id']) ? (int) $_GET['session_id'] : 'null' ?>;
 
                 document.addEventListener("DOMContentLoaded", function () {
-
                     let totalRounds = 1;
                     let currentRound = 1;
                     let roundTime = 25 * 60; // default 25 min in seconds
@@ -284,12 +279,17 @@ $user_id = $_SESSION['user_id'];
 
                                 // Optional: Show photocard in SweetAlert if data contains <img>
                                 if (data.includes("<img")) {
+                                    const parser = new DOMParser();
+                                    const doc = parser.parseFromString(data, 'text/html');
+                                    const div = doc.querySelector('div[data-member]');
+                                    const memberName = div ? div.getAttribute('data-member') : 'a photocard';
+
                                     playSound();
 
                                     Swal.fire({
-                                        title: '🎉 You earned a photocard!',
-                                        html: data,
-                                        confirmButtonText: 'Yay!',
+                                        title: `🎉 You earned ${memberName}!`,
+                                        html: data, // this contains the photocard image
+                                        confirmButtonText: 'Yayy!',
                                         customClass: {
                                             popup: 'rounded-lg'
                                         }
@@ -299,12 +299,12 @@ $user_id = $_SESSION['user_id'];
                                         }
                                     });
                                 }
+
                             })
                             .catch(error => {
                                 console.error('Error:', error);
                             });
                     }
-
 
                     // Update Timer display
                     function updateTimerDisplay() {
@@ -330,8 +330,6 @@ $user_id = $_SESSION['user_id'];
                                     recordCompletedRound(currentRound); // This will handle both round + photocard
                                     return;
                                 }
-
-
                                 Swal.fire({
                                     icon: 'success',
                                     title: `🎉 Round ${currentRound} complete!`,
@@ -366,7 +364,6 @@ $user_id = $_SESSION['user_id'];
                             saveTimerState();
                         }
                     }
-
 
                     function startRound() {
                         timeLeft = roundTime;
@@ -442,7 +439,6 @@ $user_id = $_SESSION['user_id'];
                     pauseBtn.addEventListener('click', pauseTimer);
                     resetBtn.addEventListener('click', resetTimer);
 
-                    // Restore timer state on page load
                     restoreTimerState();
 
                     // Save timer state before leaving page
@@ -585,7 +581,6 @@ $user_id = $_SESSION['user_id'];
             <?php unset($_SESSION['task_completed']); ?>
         <?php endif; ?>
 
-
         <?php
         // Reset result pointer and fetch rows again to generate modals
         mysqli_data_seek($result, 0);
@@ -657,6 +652,7 @@ $user_id = $_SESSION['user_id'];
     </div>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../script.js"></script>
     <script>
@@ -681,7 +677,7 @@ $user_id = $_SESSION['user_id'];
                     })
                         .then(response => response.text())
                         .then(data => {
-                            console.log(data); 
+                            console.log(data);
                         });
                 });
             } else {
@@ -703,10 +699,65 @@ $user_id = $_SESSION['user_id'];
 
         document.getElementById('timerButtons').style.display = 'block';
 
-
     </script>
 
+    <!-- Floating Font Awesome Icon (Reminder Button with Tooltip) -->
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; cursor: pointer;">
+        <i id="showReminderBtn" class="fas fa-triangle-exclamation fa-2x text-warning" data-bs-toggle="tooltip"
+            data-bs-placement="left" data-bs-custom-class="custom-tooltip" title="Click here first!"></i>
+    </div>
+
+    <div class="modal fade" id="taskReminderModal" tabindex="-1" aria-labelledby="taskReminderModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="taskReminderModalLabel">⚠️ Reminder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    To avoid the timer resetting automatically, before you start the timer, make sure:
+                    <ul class="mt-2 mb-0">
+                        <li>You have already added or updated your to-do list</li>
+                        <li>You do not visit other pages of NeoDrive while the timer is ticking</li>
+                        <li>You do not refresh the page</li>
+                    </ul><br>
+                    In the future, we will repair this issue.<br>
+                    Thank you for your patient.
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const reminderBtn = document.getElementById('showReminderBtn');
+            const modal = new bootstrap.Modal(document.getElementById('taskReminderModal'));
+
+            // Trigger modal when icon clicked
+            reminderBtn.addEventListener('click', function () {
+                modal.show();
+            });
+
+            // Initialize tooltip
+            const tooltip = new bootstrap.Tooltip(reminderBtn);
+
+            // Show tooltip automatically on page load
+            tooltip.show();
+
+            // Hide it after 4 seconds
+            setTimeout(() => {
+                tooltip.hide();
+            }, 4000);
+        });
+    </script>
     <style>
+        .custom-tooltip {
+            --bs-tooltip-bg: rgb(255, 110, 158);
+            --bs-tooltip-color: white;
+        }
+
         .completed-task,
         .completed-details {
             text-decoration: line-through;
@@ -724,7 +775,6 @@ $user_id = $_SESSION['user_id'];
             transition: 0.3s ease;
         }
 
-        /* Neon border effect on focus or hover */
         input[type="text"]:focus,
         input[type="text"]:hover,
         textarea:focus,
@@ -816,7 +866,6 @@ $user_id = $_SESSION['user_id'];
             box-shadow: 0 3px 6px rgba(121, 199, 119, 0.83);
         }
     </style>
-
 
 </body>
 
