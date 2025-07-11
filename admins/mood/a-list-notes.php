@@ -202,8 +202,8 @@ include("../../database/dbconn.php");
                         </div>
 
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn custom-save-btn">Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -313,6 +313,20 @@ include("../../database/dbconn.php");
                 border-color: rgb(231, 66, 88) !important;
                 color: white !important;
             }
+
+            .custom-save-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-save-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
+        }
         </style>
 </body>
 
