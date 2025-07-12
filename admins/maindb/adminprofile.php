@@ -194,23 +194,7 @@ if ($result) {
 
     
 
-    <!-- Floating Chatbot Icon -->
-    <div id="chat-icon" class="chat-icon" data-bs-toggle="tooltip" data-bs-placement="left"
-      data-bs-custom-class="custom-tooltip" title="Need help?">
-      <i class="bi bi-chat-dots-fill icon-inner"></i>
-    </div>
 
-
-    <!-- Chatbox Panel -->
-    <div id="chat-box" class="chat-box">
-      <div class="chat-title">NeoBot 🤖</div>
-      <div id="chat-history" class="chat-history"></div>
-      <form id="chatForm">
-        <input type="text" id="userMessage" name="user_message" class="form-control form-control-sm mb-2"
-          placeholder="Type a message..." required>
-        <button type="submit" class="custom-chat-btn">Send</button>
-      </form>
-    </div>
 
   </div>
   </div>
@@ -218,53 +202,7 @@ if ($result) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    const chatIcon = document.getElementById("chat-icon");
-    const chatBox = document.getElementById("chat-box");
-    const chatHistory = document.getElementById("chat-history");
-    let isChatOpened = false;
-
-    chatIcon.addEventListener("click", () => {
-      const isVisible = chatBox.style.display === "block";
-      chatBox.style.display = isVisible ? "none" : "block";
-
-      if (!isVisible && !isChatOpened) {
-        chatHistory.innerHTML = `<div class="bot-message">🤖: Hi there! 👋</div>`;
-        isChatOpened = true;
-      }
-
-      if (isVisible) {
-        chatHistory.innerHTML = "";
-        isChatOpened = false;
-      }
-    });
-
-    document.getElementById("chatForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const messageInput = document.getElementById('userMessage');
-      const message = messageInput.value.trim();
-      if (!message) return;
-
-      fetch('../chatlog/u-chatbot.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'user_message=' + encodeURIComponent(message)
-      })
-        .then(response => response.text())
-        .then(botReply => {
-          chatHistory.innerHTML += `<div class="user-message">💚: ${message}</div>`;
-          chatHistory.innerHTML += `<div class="bot-message">🤖: ${botReply}</div>`;
-          messageInput.value = '';
-          chatHistory.scrollTop = chatHistory.scrollHeight;
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-      tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
-      
-    });
+    
 
     const sidebarToggle = document.getElementById('sidebarToggle');
         if (sidebarToggle) {
@@ -392,135 +330,9 @@ if ($result) {
       color: white;
     }
 
-    .chat-icon {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: rgb(233, 155, 191);
-      color: white;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 1000;
-      
-    }
+    
 
-    .chat-icon:hover {
-      background-color: rgb(250, 170, 190);
-      transform: scale(1.15);
-      transition: transform 0.3s ease, background-color 0.3s ease;
-      
-    }
-
-    .icon-inner {
-      font-size: 1.5rem;
-    }
-
-    .chat-box {
-      display: none;
-      position: fixed;
-      bottom: 90px;
-      right: 20px;
-      width: 300px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-      padding: 10px;
-    }
-
-    .chat-title {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .chat-history {
-      height: 200px;
-      overflow-y: auto;
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-    }
-
-    .custom-chat-btn {
-      width: 100%;
-      background-color: rgb(233, 155, 191);
-      color: white;
-      border: none;
-      padding: 8px 0;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .custom-chat-btn:hover {
-      background-color: rgb(173, 26, 88);
-      transform: scale(1.02);
-    }
-
-    .custom-chat-btn:active {
-      transform: scale(0.98);
-    }
-
-    /* User Message (right aligned) */
-    .user-message {
-      background-color: rgb(255, 227, 236);
-      color: #0f5132;
-      padding: 6px 10px;
-      margin: 5px 0;
-      border-radius: 10px;
-      max-width: 80%;
-      align-self: flex-end;
-      text-align: right;
-    }
-
-    /* Bot Message (left aligned) */
-    .bot-message {
-      background-color: #f8f9fa;
-      color: #212529;
-      padding: 6px 10px;
-      margin: 5px 0;
-      border-radius: 10px;
-      max-width: 80%;
-      align-self: flex-start;
-      text-align: left;
-    }
-
-    /* For flex column layout in chat history */
-    #chat-history {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .custom-btn {
-      background-color: rgb(81, 168, 46);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      font-size: 0.85rem;
-      border-radius: 8px;
-      transition: 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .custom-btn:hover {
-      background-color: rgb(118, 240, 81);
-      transform: scale(1.05);
-      color: #fff;
-    }
-
-    .custom-tooltip {
-      --bs-tooltip-bg: rgb(255, 45, 115);
-      --bs-tooltip-color: white;
-    }
+    
   </style>
 
 </body>

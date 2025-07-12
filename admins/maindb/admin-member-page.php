@@ -127,14 +127,7 @@ check_role('admin');
                                     <i class='fa-solid fa-pencil text-white'></i>
                                 </button>
 
-                                <a href='#'
-    class='btn btn-sm " . ($row['member_status'] === 'Active' ? 'btn-warning' : 'btn-success') . " confirm-toggle-status member-toggle'
-    data-url='../member/a-deactivate-member.php?id=" . $row['member_id'] . "'
-    data-action='" . ($row['member_status'] === 'Active' ? 'deactivate' : 'activate') . "'
-    title='" . ($row['member_status'] === 'Active' ? 'Deactivate' : 'Activate') . " Member'>
-    <i class='fa-solid " . (strtolower($row['member_status']) === 'active' ? 'fa-user-slash' : 'fa-user-check') . "'></i>
-</a>
-
+                                
 
                                                               
                             </td>
@@ -215,8 +208,8 @@ check_role('admin');
 
                             <!-- Modal Footer -->
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Update Member</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn custom-save-btn">Save Changes</button>
                             </div>
 
                         </form>
@@ -400,6 +393,19 @@ check_role('admin');
                 background-color: rgb(231, 69, 69) !important;
                 border-color: rgb(231, 69, 69) !important;
             }
+        .custom-save-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            background-color: rgb(172, 236, 134);
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-save-btn:hover {
+            background-color: rgb(98, 151, 55);
+            color: white;
+        }
     </style>
 </body>
 </html>
