@@ -126,12 +126,7 @@ check_role('admin');
                                     <i class='fa-solid fa-expand'></i>
                                 </button>
                                 
-                                <button 
-                                    class='btn btn-sm " . ($row['mood_status'] === 'Active' ? 'btn-warning' : 'btn-success') . " confirm-toggle-status'
-                                    data-id='{$row['mood_id']}'
-                                    data-status='{$row['mood_status']}'>
-                                    <i class='fa-solid " . ($row['mood_status'] === 'Active' ? 'fa-face-smile-wink' : 'fa-face-sad-tear') . "'></i>
-                                </button>
+                                
 
                             </td> <!-- Make sure this td wraps both buttons -->
                         </tr>";
