@@ -24,7 +24,7 @@ check_role('admin');
         <div class="logo-title-container">
             <img src="../../assets/image/clock.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-            <a class="link-underline link-underline-opacity-0" href="#">Mood Check-In Main Dashboard</a>
+            <a class="link-underline link-underline-opacity-0" href="#">Mood Check-In Management Dashboard</a>
         </div>
         <div class="header-buttons">
             <a class="link-underline link-underline-opacity-0" href="#">Lists</a>

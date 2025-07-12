@@ -21,7 +21,7 @@ include("../../database/dbconn.php");
         <div class="logo-title-container">
             <img src="../../assets/image/clock.png" alt="Logo" class="timer-icon" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-            <a class="link-underline link-underline-opacity-0" href="#">Mindful Notes Main Dashboard</a>
+            <a class="link-underline link-underline-opacity-0" href="#">Mindful Notes Management Dashboard</a>
         </div>
         <div class="header-buttons">
             <a class="link-underline link-underline-opacity-0" href="../maindb/admin-moods-page.php">Lists</a>
